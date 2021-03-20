@@ -336,13 +336,15 @@ Request功能:
 1. 获取参数（前端form 表单中获得参数）
 2. 请求转发
 
-# Session 和Cookie
+# Session 和Cookie 
+
+https://juejin.cn/post/6844904034181070861
 
 https://segmentfault.com/a/1190000017831088
 
-## 会话
+## 会话 :session
 
-会话是指客户端和服务器通讯的过程，客户关闭浏览器后，一次会话结束（服务器检测超时，结束会话）
+会话是指客户端和服务器通讯的过程，客户关闭浏览器后，一次会话结束（服务器检测超时，结束会话）。也可以通过session.invalidate()注销。
 
 http是无状态协议：<u>没有保存服务器和客户端临时会话中产生的数据</u>。
 
@@ -350,7 +352,7 @@ http是无状态协议：<u>没有保存服务器和客户端临时会话中产�
 
 服务器端技术
 
-session 何时改变?
+## session 何时改变?
 
 1. 当在同一个浏览器中同时打开多个标签，发送同一个请求或不同的请求，仍是同一个session;
 
@@ -360,11 +362,51 @@ session 何时改变?
 
 4. 当把当前某个浏览器的窗口全关闭，再打开，发起相同的请求时，就是本文所阐述的，是不同的session,但是它和session的生命周期是没有关系的.
 
+   总结：不同浏览器各自有自己的Session ，同一的浏览器关闭再打开也会建立新Session (多开窗口Session一样)。Seesion是由服务器产生的，不同网站（pilipili 和Poxxhub），由于服务器不同，SessionID肯定不同。
+
+   以下两个图SeesionID一致
+
+   <img src="JAVA WEB.assets/image-20210317001535361.png" alt="image-20210317001535361" style="zoom:50%;" /><img src="JAVA WEB.assets/image-20210317001550343.png" alt="image-20210317001550343" style="zoom: 67%;" />
+
+   
+
+**session 是基于 cookie 实现的，session 存储在服务器端，sessionId 会被存储到客户端的cookie 中**,tomcat的ManagerBase类提供创建sessionid的方法：**随机数+时间+jvmid**；
+
+- cookie只是实现session的其中一种方案。虽然是最常用的，但并不是唯一的方法。禁用cookie后还有其他方法存储，比如放在url中
+
+<img src="JAVA WEB.assets/16f523a04d0b3cf5" alt="session.png" style="zoom: 50%;" />
+
+**SessionID 是连接 Cookie 和 Session 的一道桥梁**
+
+
+
 ## Cookie
 
 客户端技术。cookie 是一个非常具体的东西，指的就是浏览器里面能永久存储的一种数据(Key-Value 形式)。是浏览器实现的一种数据存储功能。
 
-有两种：一种存在于浏览器的进程中（会话Cookie）。一种存在于硬盘中
+有两种：一种存在于内存中（内存式）。一种存在于硬盘中（硬盘式）
+
+## Session 和Cookie 的区别
+
+**安全性：** Session 比 Cookie 安全，Session 是存储在服务器端的，Cookie 是存储在客户端的。
+
+**存取值的类型不同**：Cookie 只支持存字符串数据，想要设置其他类型的数据，需要将其转换成字符串，Session 可以存任意数据类型。
+
+**有效期不同：** Cookie 可设置为长时间保持，比如我们经常使用的默认登录功能，Session 一般失效时间较短，客户端关闭（默认情况下）或者 Session 超时都会失效。
+
+**存储大小不同：** 单个 Cookie 保存的数据不能超过 4K，Session 可存储数据远高于 Cookie，但是当访问量过多，会占用过多的服务器资源。
+
+## Session 与Redis
+
+我们需要将Session持久化存储，Redis存储是一个非常不错的Session持久化解决方案
+
+## Token
+
+https://juejin.cn/post/6844904034181070861
+
+token在客户端一般存放于localStorage，cookie，或sessionStorage中。在服务器一般存于数据库中
+
+<img src="JAVA WEB.assets/16b4fb158d0b2254" alt="Token" style="zoom:67%;" />
 
 # JSP
 
