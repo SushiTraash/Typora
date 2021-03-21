@@ -419,7 +419,6 @@ SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, propert
 
 - ## 	mybatis-config.xml
 
-  
 
 ~~~xml
 <mappers>
@@ -608,4 +607,6 @@ log4j.logger.java.sql.PreparedStatement=DEBUG
   
   ~~~
 
-  
+## 分页 （先跳过）
+
+## 注解
