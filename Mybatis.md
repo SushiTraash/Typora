@@ -230,9 +230,13 @@
 </mapper>
 ~~~
 
-## 配置解析（mybatis-config.xml）
 
-## properties
+
+## XML配置（mybatis-config.xml）
+
+### properties
+
+- # properties
 
 用于简化数据库连接信息的配置（url、username、password）
 
@@ -267,7 +271,9 @@ password=198045
 
 
 
-## settings （完整版看官方文档）
+### settings （完整版看官方文档）
+
+- # settings
 
 | 设置名             | 描述                                                         | 有效值                                                       | 默认值 |
 | :----------------- | :----------------------------------------------------------- | :----------------------------------------------------------- | :----- |
@@ -275,9 +281,19 @@ password=198045
 | lazyLoadingEnabled | 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置 `fetchType` 属性来覆盖该项的开关状态。 | true \| false                                                | false  |
 | logImpl            | 指定 MyBatis 所用日志的具体实现，未指定时将自动查找。        | SLF4J \| LOG4J \| LOG4J2 \| JDK_LOGGING \| COMMONS_LOGGING \| STDOUT_LOGGING \| NO_LOGGING | 未设置 |
 
+### 日志 (在Mybatis-config 中)
+
+~~~XML
+<settings>
+    <setting name="logImpl" value="STDOUT_LOGGING"/>
+</settings>
+~~~
 
 
-## typeAliases 
+
+### typeAliases 
+
+- # typeAliases 
 
 别名，提供缩写功能。用于在mapper.xml中缩写JavaBean的名字
 
@@ -325,7 +341,9 @@ public class UserMapper {
 }
 ```
 
-## environments
+### environments
+
+- # environments
 
 可以配置多个环境
 
@@ -382,7 +400,9 @@ SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, propert
 
 
 
-## Mapper 注册
+### Mapper 注册
+
+- # Mapper 注册
 
 - ## 方式一：直接注册mapper.xml文件
 
@@ -421,5 +441,171 @@ SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, propert
 
 
 
+## XML映射（Mapper.xml）
+
+### 输入参数映射
+
+- ## 使用Map传递输入参数
+
+Mapper接口中
+
+~~~java
+public interface UserMapper {
+    List<User> getUserList();
+    User getUserById(int id);
+    int insertUser(User user);
+    int deleteUserById(int id);
+    int updateUser(User user);
+    User selectUser2(Map<String,Object> map);
+
+}
+~~~
+
+mapper.xml
+
+~~~xml
+<select id="selectUser2" parameterType="map" resultType="user"> //注意：此处在mybatis.config 中增加了user的别名
+    select * from mybatis.user where id = #{id}
+</select>
+~~~
+
+测试类
+
+~~~java
+@Test
+public void testSelect2(){
+    Map<String,Object> map = new HashMap<>();//使用了Map
+    map.put("id",1);//键名 就是sql中的输入参数名
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+    UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+    User user =  userMapper.selectUser2(map);
+    System.out.println(user);
+}
+~~~
 
 
+
+### 结果映射
+
+- # 结果映射
+
+保证JavaBean (POJO)的属性名和数据库表中的列名一致，Mybatis 就会自动生成resultMap
+
+~~~xml
+<mapper namespace="com.DIYmybatis.Dao.UserMapper">
+    <select id="getUserList" resultType="user">
+        select * from mybatis.user
+    </select>
+    <select id="getUserById" resultType="user" parameterType="int">
+        select * from mybatis.user where id = #{id}
+    </select>
+</mapper>
+~~~
+
+也可以自定义ResultMap:
+
+- ## 实体类
+
+~~~java
+public class User {
+    private int id;
+    private String name;
+    private String pass;//将pwd 改为pass
+///.....省略
+}
+
+~~~
+
+- ## 自定义ResultMap
+
+~~~xml
+<resultMap id="userMap" type="User">
+    <result property="pass" column="pwd"/>
+</resultMap>
+~~~
+
+- ## ResultMap使用（注意用了ResultMap就不能用ResultType )
+
+在引用它的语句中设置 resultMap 属性就行了（注意我们去掉了 resultType 属性）。
+
+~~~xml
+<select id="getUserList" resultMap="userMap">
+    select * from mybatis.user
+</select>
+~~~
+
+
+
+- ## 自定义的resultMap是在系统自动生成的ResultMap的基础上进行覆盖的
+
+~~~xml
+<resultMap id="userMap" type="User">
+    <result property="pass" column="pwd"/>
+    <result property="id" column="aa"/>//新增加的两对映射 的列名 是错误 查询出来的结果为 id 0 name 为null 证明系统的ResultMap 被覆盖了
+    <result property="name" column="aa"/>
+</resultMap>
+~~~
+
+## 日志
+
+- ## 日志配置文件 log4j.properties
+
+~~~properties
+#将等级为DEBUG的日志信息输出到console和file这两个目的地，console和file的定义在下
+#面的代码
+log4j.rootLogger=DEBUG,console,file
+#控制台输出的相关设置
+log4j.appender.console = org.apache.log4j.ConsoleAppender
+log4j.appender.console.Target = System.out
+log4j.appender.console.Threshold=DEBUG
+log4j.appender.console.layout = org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern=[%c]-%m%n
+#文件输出的相关设置
+#第一一行代表日志输出覆盖原日志文件
+log4j.appender.file.Append = false 
+log4j.appender.file = org.apache.log4j.RollingFileAppender
+log4j.appender.file.File=./log/logTest.log
+log4j.appender.file.MaxFileSize=10mb
+log4j.appender.file.Threshold=DEBUG
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=[%p][%d{yy-MM-dd}][%c]%m%n
+#日志输出级别
+log4j.logger.org.mybatis=DEBUG
+log4j.logger.java.sql=DEBUG
+log4j.logger.java.sql.Statement=DEBUG
+log4j.logger.java.sql.ResultSet=DEBUG
+log4j.logger.java.sql.PreparedStatement=DEBUG
+
+~~~
+
+- ## 标准日志工厂实现 mybatis-config.xml
+
+~~~xml
+<settings>
+    <setting name="logImpl" value="LOG4J"/>
+</settings>
+~~~
+
+- ## log4j的使用
+
+  mybatisTest.class类中：
+
+  ~~~java
+  
+  public class UserMapperTest {
+      static Logger logger = Logger.getLogger(UserMapperTest.class);
+      @Test
+      public void testLog4j(){
+          //优先级从低到高
+          logger.trace("trace");
+          logger.debug("debug");
+          logger.info("info ");
+          logger.warn("warn");
+          logger.error("error");
+          logger.fatal("fatal");
+      }
+  }
+  
+  ~~~
+
+  
