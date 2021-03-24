@@ -459,3 +459,35 @@ public class test {
 ~~~
 
 Volatile
+
+
+
+## 线程池
+
+- ## 线程池好处
+
+
+1. 降低资源消耗；
+2. 提高响应速度；
+3. 方便管理线程；
+
+- ## 线程池使用
+
+
+~~~java
+// 创建固定大小的线程池:
+ExecutorService executor = Executors.newFixedThreadPool(3);//
+//ExecutorService extends Executor  两者都是接口
+/*
+1. FixedThreadPool：线程数固定的线程池；Executors.newFixedThreadPool(3);
+2. CachedThreadPool：线程数根据任务动态调整的线程池；Executors.newCachedThreadPool();
+3. SingleThreadExecutor：仅单线程执行的线程池。Executors.SingleThreadExecutor();
+*/
+// 提交任务:
+executor.submit(task1);
+executor.submit(task2);
+executor.submit(task3);
+executor.submit(task4);
+executor.submit(task5);
+~~~
+
