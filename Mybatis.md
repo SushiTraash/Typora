@@ -482,6 +482,14 @@ public void testSelect2(){
 }
 ~~~
 
+- ## 使用@Param 注解
+
+~~~JAVA
+User getUserById(@Param("id2") int id); id 被映射为id2 在sql中 用#{id2}
+对应SQL:
+"select * from mybatis.user where id = #{id2}"
+~~~
+
 
 
 ### 结果映射
@@ -609,4 +617,44 @@ log4j.logger.java.sql.PreparedStatement=DEBUG
 
 ## 分页 （先跳过）
 
-## 注解
+## 注解CRUD
+
+~~~java
+//结果映射和SQL操作绑定（一对一的），property是mapper类的属性名 column是数据库列名
+@Results(
+    @Result(column = "pwd",property = "pass")
+)
+@Select("select * from mybatis.user")
+List<User> getUserList();
+//select by ID
+@Select("select * from mybatis.user where id = #{id2}")
+@Results(
+    @Result(column = "pwd",property = "pass")
+)
+User getUserById(@Param("id2") int id);
+//insert user
+@Insert("insert into mybatis.user values(#{id},#{name},#{pass})")
+int insertUser(User user);
+//delete user
+@Delete("delete from mybatis.user where id = #{id}")
+int deleteUser(int id);
+//update user
+@Update("update mybatis.user  set name = #{name} , pwd = #{pass} where id = #{id}")
+int updateUser(User user);
+~~~
+
+## Lombok简化POJO
+
+~~~java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+    private int id;
+    private String name;
+    private String pass;
+    
+}
+~~~
+
+## 一对多多对一（待学）

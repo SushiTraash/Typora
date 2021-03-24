@@ -265,3 +265,197 @@ assert x>0;
 assert x>0:x;
 ~~~
 
+# 修饰符访问域
+
+| 修饰符      | 当前类 | 同一包内、子孙类(同一包) | 子孙类(不同包)                                               | 其他包 |
+| :---------- | :----- | :----------------------- | :----------------------------------------------------------- | :----- |
+| `public`    | Y      | Y                        | Y                                                            | Y      |
+| `protected` | Y      | Y                        | Y/N（[说明](https://www.runoob.com/java/java-modifier-types.html#protected-desc)） | N      |
+| `default`   | Y      | Y                        | N                                                            | N      |
+| `private`   | Y      | N                        | N                                                            | N      |
+
+”远亲不如近邻“：访问优先级：同类>同包>子类>其他包
+
+- **子类与基类在同一包中**：被声明为 protected 的变量、方法和构造器能被同一个包中的任何其他类访问；
+- **子类与基类不在同一包中**：那么在子类中，子类实例可以访问其从基类继承而来的 protected 变量、方法和构造器，而不能访问基类实例的protected变量、方法和构造器。
+
+# 并发
+
+## 创建线程
+
+- ## 继承Thread 
+
+  ~~~java
+  public class Main extends Thread  {
+      @Override
+      public void run() {
+          for (int i = 0; i < 200; i++) {
+              System.out.println("Main running");
+          }
+      }
+      public static void main(String[] args) {
+  
+          Main Main1= new Main();
+          Main1.start();
+          for (int i = 0; i < 2000; i++) {
+              
+              System.out.println("main------ running");
+          }
+  
+      }
+  }
+  ~~~
+
+  
+
+- ## 实现Runnable 
+
+  ~~~java
+  public class Main implements Runnable  {
+      @Override
+      public void run() {
+          for (int i = 0; i < 2000; i++) {
+              System.out.println("Main running");
+          }
+      }
+      public static void main(String[] args) {
+          new Thread(new Main()).start();
+          for (int i = 0; i < 2000; i++) {
+  
+              System.out.println("main------ running");
+          }
+  
+      }
+  }
+  ~~~
+
+  
+
+- ## 实现Callable
+
+  ~~~java
+  
+  ~~~
+
+## ReentrantLock
+
+- ## 可重入锁
+
+  ### 同一个线程可以递归调用同一个锁的Lock, Lock有个计数器计算这个线程 调用了多少次Lock
+
+- ### ReentrantLock 和Synchronized 的锁都是可重入的
+
+  
+
+## Synchronized
+
+- ## 	使用
+
+- ## **1.修饰实例方法:** 
+
+
+作用于当前对象实例加锁，进入同步代码前要获得 **当前对象实例的锁**
+
+```java
+synchronized void method() {
+  //业务代码
+}
+```
+
+- ## **2.修饰静态方法:** 
+
+
+也就是给当前类加锁，会作用于类的所有对象实例 ，进入同步代码前要获得 **当前 class 的锁**。因为静态成员不属于任何一个实例对象，是类成员（ *static 表明这是该类的一个静态资源，不管 new 了多少个对象，只有一份*）。所以，如果一个线程 A 调用一个实例对象的非静态 `synchronized` 方法，而线程 B 需要调用这个实例对象所属类的静态 `synchronized` 方法，是允许的，不会发生互斥现象，**因为访问静态 `synchronized` 方法占用的锁是当前类的锁，而访问非静态 `synchronized` 方法占用的锁是当前实例对象锁**。
+
+```java
+synchronized static void method() {
+	//业务代码
+}
+```
+
+- ## **3.修饰代码块** ：
+
+
+指定加锁对象，对给定对象/类加锁。`synchronized(this|object)` 表示进入同步代码库前要获得**给定对象的锁**。`synchronized(类.class)` 表示进入同步代码前要获得 **当前 class 的锁**
+
+```java
+synchronized(this) {
+  //业务代码
+}
+```
+
+前面的两种方法都可以用第三种表示
+
+~~~java
+//修饰对象
+synchronized void method() {
+  //业务代码
+}
+///等价于
+void method() {
+      synchronized(this) {
+      //业务代码
+    }
+}
+
+///修饰一个类
+synchronized static void method() {//静态方法是类共享的
+  //业务代码
+}
+///等价于
+void method() {
+      synchronized(ClassName.class) {//ClassName 对应类名
+      //业务代码
+    }
+}
+~~~
+
+**总结：**
+
+- `synchronized` 关键字加到 `static` 静态方法和 `synchronized(class)` 代码块上都是是给 Class 类上锁。
+
+- `synchronized` 关键字加到实例方法上是给对象实例上锁。
+
+- 尽量不要使用 `synchronized(String a)` 因为 JVM 中，字符串常量池具有缓存功能！
+
+- ## 例子
+
+https://juejin.cn/post/6844903705523798029
+
+~~~java
+class MyThread implements Runnable {
+    private int count;
+
+    public MyThread() {
+        count = 0;
+    }
+
+    public  void run() {
+        //同步代码块中锁定的是当前实例对象
+        synchronized(this) {//对象锁
+            for (int i = 0; i < 5; i++) {
+                try {
+                    System.out.println(Thread.currentThread().getName() + ":" + (count++));
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+public class test {
+
+	public static void main(String[] args) {
+		SyncThread syncThread = new SyncThread();
+		//注意此刻是一个同一个实例对象
+		Thread thread1 = new Thread(syncThread, "SyncThread1");
+		Thread thread2 = new Thread(syncThread, "SyncThread2");
+		thread1.start();
+		thread2.start();
+	}
+
+}
+~~~
+
+Volatile
