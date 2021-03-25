@@ -196,18 +196,81 @@ public class test {
     }
 ~~~
 
-
-
 ## bean配置
 
 ~~~xml
-    <!--id：bean 的唯一标识
+<!--id：bean 的唯一标识
      class: 对应pojo对象的全限定类名
      name: 别名 可以设置多个别名，别名用空格，逗号，分号（;）隔开
-	scope 设置单例模式..原型..
+ scope 设置单例模式..原型..
      -->
-    <bean id="hello" class="com.spring.pojo.hello" name="user u2 u3 u4,u5;u6">
-    </bean>
+<bean id="hello" class="com.spring.pojo.hello" name="user u2 u3 u4,u5;u6">
+</bean>
+
+
+
+<!------
+-------
+------Property 设置
+-------->
+<bean id = "addr" class="com.spring.pojo.Address">
+    <property name="address" value="testAddress"/>
+</bean>
+<bean id ="stu" class="com.spring.pojo.Student">
+
+    <!--普通值注入-->
+    <property name="name" value="testString"/>
+
+    <!--Bean 注入-->
+    <property name="address" ref="addr"/>
+
+    <!--数组注入-->
+    <property name="books">
+        <array>
+            <value>book1</value>
+            <value>book2</value>
+            <value>book3</value>
+        </array>
+    </property>
+
+    <!--List注入-->
+    <property name="hobbys">
+        <list>
+            <value>hob1</value>
+            <value>hob2</value>
+            <value>hob3</value>
+        </list>
+    </property>
+
+    <!--Map-->
+    <property name="card">
+        <map>
+            <entry key="key1" value="123123123"/>
+            <entry key="key2" value="321312312"/>
+        </map>
+    </property>
+
+    <!--Set-->
+    <property name="games">
+        <set>
+            <value>GAME1</value>
+            <value>GAME2</value>
+            <value>GAME3</value>
+        </set>
+    </property>
+
+    <!--NULL-->
+    <property name="nil">
+        <null></null>
+    </property>
+    <!--properties-->
+    <property name="info">
+        <props>
+            <prop key="key1">value1</prop>
+            <prop key="key2">value2</prop>
+        </props>
+    </property>
+</bean>
 ~~~
 
 ## import
@@ -249,8 +312,161 @@ public class SimpleMovieLister {
 }
 ~~~
 
+- ## 对应Bean.xml使用有参构造
 
+~~~xml
+<!--调用有参构造函数创建对象-->
+<!--1. 使用下标-->
+<bean id="hello" class="com.spring.pojo.hello">
+    <constructor-arg index="0" value="name_arg_index0"/>
+
+</bean>
+<!--2. 使用参数类型-->
+<bean id="hello" class="com.spring.pojo.hello">
+    <constructor-arg type="java.lang.String" value="name_arg_Type"/>
+</bean>
+<!--3. 使用参数名称-->
+<bean id="hello" class="com.spring.pojo.hello">
+    <constructor-arg name="name" value="name_arg_name"/>
+</bean>
+~~~
 
 ## set方式注入
 
+- ## 使用Bean的properties设置注入（实质上是调用Set方法）
+
+~~~xml
+<!------
+-------
+------Property 设置
+-------->
+<bean id = "addr" class="com.spring.pojo.Address">
+    <property name="address" value="testAddress"/>
+</bean>
+<bean id ="stu" class="com.spring.pojo.Student">
+
+    <!--普通值注入-->
+    <property name="name" value="testString"/>
+
+    <!--Bean 注入-->
+    <property name="address" ref="addr"/>
+
+    <!--数组注入-->
+    <property name="books">
+        <array>
+            <value>book1</value>
+            <value>book2</value>
+            <value>book3</value>
+        </array>
+    </property>
+
+    <!--List注入-->
+    <property name="hobbys">
+        <list>
+            <value>hob1</value>
+            <value>hob2</value>
+            <value>hob3</value>
+        </list>
+    </property>
+
+    <!--Map-->
+    <property name="card">
+        <map>
+            <entry key="key1" value="123123123"/>
+            <entry key="key2" value="321312312"/>
+        </map>
+    </property>
+
+    <!--Set-->
+    <property name="games">
+        <set>
+            <value>GAME1</value>
+            <value>GAME2</value>
+            <value>GAME3</value>
+        </set>
+    </property>
+
+    <!--NULL-->
+    <property name="nil">
+        <null></null>
+    </property>
+    <!--properties-->
+    <property name="info">
+        <props>
+            <prop key="key1">value1</prop>
+            <prop key="key2">value2</prop>
+        </props>
+    </property>
+</bean>
+~~~
+
 ## 拓展注入
+
+- ## 使用c命名空间和p命名空间进行缩写
+
+~~~xml
+ <!--p命名空间-->
+<bean name="classic" class="com.example.ExampleBean">
+    <property name="email" value="someone@somewhere.com"/>
+</bean>
+<bean name="p-namespace" class="com.example.ExampleBean"
+      p:email="someone@somewhere.com"/>
+
+
+<!--c命名空间-->
+<!-- traditional declaration with optional argument names -->
+<bean id="beanOne" class="x.y.ThingOne">
+    <constructor-arg name="thingTwo" ref="beanTwo"/>
+    <constructor-arg name="thingThree" ref="beanThree"/>
+    <constructor-arg name="email" value="something@somewhere.com"/>
+</bean>
+
+<!-- c-namespace declaration with argument names -->
+<bean id="beanOne" class="x.y.ThingOne" c:thingTwo-ref="beanTwo"
+      c:thingThree-ref="beanThree" c:email="something@somewhere.com"/>
+
+~~~
+
+# Bean自动装配
+
+## Bean.xml
+
+~~~xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="dog" class="com.kuang.pojo.Dog"/>
+    <bean id="cat" class="com.kuang.pojo.Cat"/>
+    <bean id="user" class="com.kuang.pojo.User">
+    	<property name="cat" ref="cat"/>
+    	<property name="dog" ref="dog"/>
+    	<property name="str" value="qinjiang"/>
+    </bean>
+</beans>
+~~~
+
+## ByName
+
+使用Set方法名里面的属性名，如SetCat 匹配id 为“cat”（要保证id 唯一）
+
+~~~xml
+<bean id="dog" class="com.kuang.pojo.Dog"/>
+    <bean id="cat" class="com.kuang.pojo.Cat"/>
+<bean id="user" class="com.kuang.pojo.User" autowire="byName">
+	<property name="str" value="qinjiang"/>
+</bean>
+~~~
+
+## ByType
+
+根据类型匹配，匹配Set方法中形参的类型
+
+~~~xml
+<bean id="user" class="com.kuang.pojo.User" autowire="byType">
+	<property name="str" value="qinjiang"/>
+</bean>
+~~~
+
+## 注解自动装配
+
