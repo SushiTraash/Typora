@@ -491,3 +491,53 @@ executor.submit(task4);
 executor.submit(task5);
 ~~~
 
+## 线程的状态
+
+https://blog.csdn.net/pange1991/article/details/53860651
+
+- ## java 规范规定的状态只有 new runnable,wait,time_wait,blocked,terminated。
+
+- ## 但是为了更好理解还是按照类似操作系统里面的线程状态的标准来理解 多线程的编程:
+
+  - NEW
+
+  - 就绪状态
+
+  - 运行状态
+
+  - 阻塞状态
+
+  - 等待
+
+    - wait()不带参数，需要notify()，notifyAll()唤醒
+
+  - 超时等待
+
+    - wait(timeout) 带超时参数
+    - sleep(timeput) （不释放锁）
+
+  - DEAD
+
+    ~~~java
+    //使用标志位flag 标记进程是否停止
+    public class testStop implements Runnable{
+    	//标志位
+        private boolean flag = true;
+        
+        public void run(){
+            while(flag){
+                //to  do
+            }
+        }
+        
+        //设置停止的方法
+        public void stop(){
+            this.flag = false;
+        }
+    }
+    ~~~
+
+    
+
+  ![线程状态图](Java.assets/20181120173640764.jpeg)
+

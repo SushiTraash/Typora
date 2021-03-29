@@ -6,6 +6,63 @@ Java 集合容器主要包含Collection 和Map 两大类。（Map 接口里的Va
 
 上述类图中，实线边框的是实现类，比如ArrayList，LinkedList，HashMap等，折线边框的是抽象类，比如AbstractCollection，AbstractList，AbstractMap等，而点线边框的是接口，比如Collection，Iterator，List等。
 
+## Map collection 方法
+
+- # Map
+
+~~~java
+////Map/
+Map.put(key,value);//添加
+map.remove(key);//删除
+map.replace(key,val);//替换
+map.size();
+Map.keySet();//获取键
+Map.values();//获取值
+Map.keySet().iterator();//获取keySet迭代器
+
+
+//遍历 Map
+Map<String, String> map = new HashMap<String, String>();
+map.put("1", "value1");
+map.put("2", "value2");
+map.put("3", "value3");
+
+//第一种：普遍使用，二次取值
+System.out.println("通过Map.keySet遍历key和value：");
+for (String key : map.keySet()) {
+    System.out.println("key= "+ key + " and value= " + map.get(key));
+}
+
+//第二种
+System.out.println("通过Map.entrySet使用iterator遍历key和value：");
+Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
+while (it.hasNext()) {
+    Map.Entry<String, String> entry = it.next();
+    System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
+}
+
+//第三种：推荐，尤其是容量大时
+System.out.println("通过Map.entrySet遍历key和value");
+for (Map.Entry<String, String> entry : map.entrySet()) {
+    System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
+}
+
+//第四种
+System.out.println("通过Map.values()遍历所有的value，但不能遍历key");
+for (String v : map.values()) {
+    System.out.println("value= " + v);
+}
+~~~
+
+- # Collection
+
+~~~java
+collection.add(E e);//添加
+collection.remove(E e);//删除
+collection.size();
+collection.iterator();//获取迭代器
+~~~
+
 
 
 # Hash 原理 
