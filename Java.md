@@ -1,5 +1,67 @@
 # Java
 
+# 基本操作
+
+## 数组类型转换
+
+~~~java
+Arrays.stream(arr1).boxed().toArray(Integer[]::new);
+
+~~~
+
+
+
+## 数组排序
+
+![img](Java.assets/1146339-20190414161338970-45144493.png)
+
+![img](Java.assets/1146339-20190414161417052-503826141.png)
+
+- ### Comparator return -负数 证明两个数不用交换（类似ASCII码）
+
+- ### 只有对象数组可以使用Comparatore
+
+- ~~~java
+     public static void main(String[] args){
+  
+          int[] H = {1,2,3,1};
+          
+          //普通数组排序
+          //排序0 到 2 不包括3
+          Arrays.sort(H, 0, 3);
+          //数组封装为 对象 排序
+          Integer[] boxedH = Arrays.stream(H).boxed().toArray(Integer[]::new);
+          Arrays.sort(boxedH, 0, 3, (a, b) ->  a > b ? -1 : 1);
+          for (Integer integer : boxedH) {
+              System.out.println(integer);
+          }
+          
+          //list 排序
+          ArrayList<Integer> list = new ArrayList<>();
+          list.add(1);
+          list.add(2);
+          list.add(3);
+          list.add(4);
+          list.sort((a,b) -> a > b ? - 1: 1);
+          for (Integer integer : list) {
+              System.out.println(integer);
+          }
+          ///map 排序
+          HashMap<Integer,String> map = new HashMap<>();
+          map.put(1,"1");
+          map.put(2,"2");
+          ArrayList<Integer> mapkey = new ArrayList<>(map.keySet());
+          mapkey.sort((a,b) -> a > b ? -1 : 1);
+  
+          for (Integer integer : mapkey) {
+              System.out.println( map.get(integer));
+          }
+  
+      }
+  ~~~
+
+  
+
 # 基本类操作
 
 ## String 
