@@ -1,12 +1,38 @@
 # Java
 
+# IO
+
+正则表达式匹配数字
+
+~~~JAVA
+int[] H = {1,2,3,1};
+String test = "[1, 2 , 3]";
+//正则表达式提取输入数字
+Scanner sc = new Scanner(System.in);
+test = sc.nextLine();
+test = test.replaceAll("[^\\d]"," ");//[^\\d] 匹配非数字 方式一
+test = test.replaceAll("[^0-9]"," ");//[^0-9] 匹配非数字 方式二
+test = test.replaceAll("\\D"," ");//\\D 匹配非数字 方式三
+test = test.replaceAll("\\s+"," ");//去除多余空格
+String[] testA = test.split(" ");
+
+int[] res = new int[testA.length];
+System.out.println(test);
+//转string 为 int
+for (int i = 0; i < testA.length; i++) {
+    res[i] = Integer.parseInt(testA[i]);
+    System.out.println(res[i]);
+}
+~~~
+
+
+
 # 基本操作
 
 ## 数组类型转换
 
 ~~~java
 Arrays.stream(arr1).boxed().toArray(Integer[]::new);
-
 ~~~
 
 

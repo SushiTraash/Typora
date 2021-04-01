@@ -4,13 +4,16 @@
 
 https://mp.weixin.qq.com/s?__biz=Mzg2NjU1MzIxNg==&mid=2247483846&idx=1&sn=7691121f35968b55b2474681d16ebb24&chksm=ce485d29f93fd43fe8b8645c5b6a77e2fbab86be395e16d87ba6e1470c3afa065df7712e7e3e&token=1626063786&lang=zh_CN#rd
 
-## **1、线性模型**
+## 1、线性DP
 
-## **2、区间模型**
+最小上升子序列
+dp[i] = max{dp[j] } + 1   (0<=  j < i  , num[j] < num[i])
 
-## **3、树状模型**
+## 2、区间DP
 
-## **4、状态压缩模型**
+## 3、树形DP
+
+## 4、坐标DP
 
 
 

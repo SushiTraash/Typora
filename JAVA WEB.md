@@ -362,7 +362,7 @@ http是无状态协议：<u>没有保存服务器和客户端临时会话中产�
 
 4. 当把当前某个浏览器的窗口全关闭，再打开，发起相同的请求时，就是本文所阐述的，是不同的session,但是它和session的生命周期是没有关系的.
 
-   总结：不同浏览器各自有自己的Session ，同一的浏览器关闭再打开也会建立新Session (多开窗口Session一样)。Seesion是由服务器产生的，不同网站（pilipili 和Poxxhub），由于服务器不同，SessionID肯定不同。
+   总结：不同浏览器各自有自己的Session ，同一的浏览器关闭再打开也会建立新Session (多开窗口Session一样)。Seesion是由服务器产生的，不同网站，由于服务器不同，SessionID肯定不同。
 
    以下两个图SeesionID一致
 
