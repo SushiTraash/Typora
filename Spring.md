@@ -470,3 +470,395 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 ## 注解自动装配
 
+# AOP
+
+## 方式一
+
+- ### 导入 织入包 的依赖
+
+~~~xml
+<dependency>
+     <groupId>org.aspectj</groupId>
+     <artifactId>aspectjweaver</artifactId>
+     <version>1.9.6</version>
+</dependency>
+~~~
+
+- ### 接口 Service
+
+~~~java
+public interface UserService {
+    public void add();
+    public void delete();
+    public void update();
+    public void select();
+
+}
+~~~
+
+- ### 实现类SeriviceImpl
+
+~~~java
+public class UserServiceImpl implements UserService {
+    @Override
+    public void add() {
+        System.out.println("add");
+    }
+
+    @Override
+    public void delete() {
+        System.out.println("delete");
+    }
+
+    @Override
+    public void update() {
+        System.out.println("update");
+    }
+
+    @Override
+    public void select() {
+        System.out.println("select");
+    }
+}
+~~~
+
+- ### 将要织入的日志类（通用逻辑功能） ：增强类( pacakge：com.spring.log)
+
+~~~java
+//在接口方法调用前织入
+public class log implements MethodBeforeAdvice {
+    @Override
+    public void before(Method method, Object[] objects, Object target) throws Throwable {
+        System.out.println(target.getClass().getName()+" "+method.getName());
+    }
+}
+//在接口方法返回值之后 织入
+public class AfterLog implements AfterReturningAdvice {
+
+    @Override
+    public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
+        System.out.println(method.getName()+"  res: "+returnValue);
+    }
+}
+~~~
+
+- ### 配置对应增强类
+
+~~~xml
+
+方式一 
+<aop:config>
+    <!--切入点 execution(类似正则表达式： *（返回值） 类名.* (代表所有方法)  (..) 代表参数)-->
+    <aop:pointcut id="poi" expression="execution(* com.spring.service.UserServiceImpl.*(..))"/>
+    <!--环绕环境增强-->
+    <aop:advisor advice-ref="log" pointcut-ref="poi"/>
+    <aop:advisor advice-ref="afterLog" pointcut-ref="poi"/>
+</aop:config>
+    
+~~~
+
+
+
+## 方式二 使用自定义类织入
+
+- ### 自定义增强类
+
+~~~java
+public class diyPoi {
+    public void befor(){
+        System.out.println("before");
+
+    }
+    public void after(){
+        System.out.println("after");
+    }
+}
+~~~
+
+- ### spring 中 配置
+
+~~~xml
+方式二 ： 自定义类
+<bean id="diy" class="com.spring.diy.diyPoi"/>
+<aop:config>
+    <aop:aspect ref="diy">
+        <!--            切入点-->
+        <aop:pointcut id="point" expression="execution(* com.spring.service.UserServiceImpl.*(..))"/>
+        <!--            通知 即切面要执行的方法-->
+        <aop:before method="befor" pointcut-ref="point"/>
+        <aop:after method="after" pointcut-ref="point"/>
+    </aop:aspect>
+</aop:config>
+~~~
+
+## 方式三 注解实现
+
+- ### 增强类
+
+~~~java
+@Aspect //标注为切面
+public class annotationPoi {
+    @Before("execution(* com.spring.service.UserServiceImpl.* (..))")
+    public void before(){
+        System.out.println("annotation before");
+    }
+
+    @After("execution(* com.spring.service.UserServiceImpl.* (..))")
+    public void after(){
+        System.out.println("annotation after");
+    }
+    @Around("execution(* com.spring.service.UserServiceImpl.* (..))")
+    public void around(ProceedingJoinPoint jp) throws Throwable{
+        System.out.println("befor around" );
+        Object o = jp.proceed();
+        System.out.println("after around" );
+    }
+
+}
+~~~
+
+- ### 在spring 中配置
+
+~~~xml
+<!--    方式三 注解实现AOP-->
+    <bean id="annotationPoi" class="com.spring.diy.annotationPoi"/>
+<!--    注解支持-->
+    <aop:aspectj-autoproxy/>
+~~~
+
+
+
+# 整合Mybatis
+
+## 方式一
+
+- ## Mybatis-config.xml(Resources 文件夹下)
+
+- ### 在Mybatis-Config.xml 中只留下别名 和设置 在Mybatis 中设置了的属性不能在Spring 的Beans 中重复设置
+
+~~~xml
+<!-- Mybatis-config.xml-->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--在Mybatis 中只留下别名 和设置 在Mybatis 中设置了的属性不能在Spring 的Beans 中重复设置-->
+
+    <!--别名在mybatis    -->
+    <typeAliases>
+        <package name="com.spring.pojo"/>
+    </typeAliases>
+
+    <!--settings   -->
+
+</configuration>
+
+~~~
+
+- ## spring-dao.xml
+
+- ### spring-dao.xml 关注数据库的连接配置 导入Mybatis.config.xml的补充信息   (别名 和 Setting )
+
+~~~xml
+<!-- Beans.xml    -->
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--DataSource 数据源-->
+    <bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/mybatis?useUnicode=true&amp;characterEncodeing=UTF-8&amp;serverTimezone=UTC"/>
+        <property name="username" value="root"/>
+        <property name="password" value="198045"/>
+    </bean>
+    <!-- SqlSessionFactory   关联Mybatis 中的configuration -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource" />
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:com/spring/mapper/*.xml"/>
+     </bean>
+
+    <!--sqlSessionTemplate    -->
+    <bean id ="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <!-- 构造器注入        -->
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+
+</beans>
+~~~
+
+- ## applicationContext.xml  
+
+- ### applicationContext.xml 关注实现类Impl的Bean配置 导入Beans.xml
+
+~~~xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--导入Beans 这个xml 只关注实现类Impl的Bean创建即可   -->
+
+    <import resource="spring-dao.xml"/>
+    <!--   注册实现类UserImpl -->
+    <bean id = "userDao" class="com.spring.mapper.UserMapperImpl"><!--实现类具体代码见下-->
+        <property name="sqlSession" ref="sqlSession"/>
+    </bean>
+</beans>
+~~~
+
+- ### 实现类UserMapperIMpl.class 需要在ApplicationContext中配置Bean
+
+~~~java
+public class UserMapperImpl implements  UserMapper{
+
+    private SqlSessionTemplate sqlSession;
+    public void setSqlSession(SqlSessionTemplate sqlSession){
+        this.sqlSession = sqlSession;
+    }
+    @Override
+    public List<User> selectUser() {
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        return mapper.selectUser();
+    }
+}
+~~~
+
+- 测试
+
+~~~java
+    @Test
+    public void test2(){
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserMapper userMapper = (UserMapper) context.getBean("userDao");
+        List<User> userList = userMapper.selectUser();
+        for (User user : userList) {
+            System.out.println(user);
+        }
+    }
+~~~
+
+## 方式二
+
+- ### 实现类 编写方式二
+
+~~~java
+public class UserMapperImpl2 extends SqlSessionDaoSupport implements UserMapper{
+
+
+    public List<User> selectUser() {
+//        SqlSession sqlSession = getSqlSession();
+//        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+//        userMapper.selectUser();
+        
+        return getSqlSession().getMapper(UserMapper.class).selectUser();//以上三行精简为一行
+    }
+}
+~~~
+
+- ### Spring-dao.xml
+
+~~~xml
+<bean id = "userDao2" class="com.spring.mapper.UserMapperImpl2">
+    <property name="sqlSessionFactory" ref="sqlSessionFactory"/><!--父类需要一个SqlSessionFactory建立SqlSession-->
+</bean>
+~~~
+
+# 事务
+
+
+
+## 环境搭建
+
+- ## 接口UserMapper
+
+~~~java
+public interface UserMapper {
+    List<User> selectUser();
+    int addUser(User user);
+    int deleteUser(int id);
+}
+~~~
+
+- ## 实现类UserMapperImpl
+
+~~~java
+public class UserMapperImpl extends SqlSessionDaoSupport implements UserMapper {
+    @Override
+    public List<User> selectUser() {
+        User user = new User(10,"testRollback","12333221");
+        UserMapper userMapper = getSqlSession().getMapper(UserMapper.class);
+        addUser(user);
+        userMapper.deleteUser(10);
+        
+        return getSqlSession().getMapper(UserMapper.class).selectUser();
+    }
+    @Override
+    public int addUser(User user) {
+        return getSqlSession().getMapper(UserMapper.class).addUser(user);
+    }
+    @Override
+    public int deleteUser(int id) {
+        return getSqlSession().getMapper(UserMapper.class).deleteUser(id);
+    }
+}
+
+~~~
+
+- ## UserMapper.xml sql语句映射（有错误,用于测试回滚）
+
+~~~xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.mapper.UserMapper">
+    <select id="selectUser" resultType="user">
+        select * from mybatis.user
+    </select>
+    <insert id="addUser" parameterType="user">
+        insert into mybatis.user (id, name, pwd) values (#{id}, #{name}, #{pwd})
+    </insert>
+    <delete id="deleteUser" >
+        deletes form mybatis.user where id = #{id} <!--故意制造错误，测试事务回滚-->
+    </delete>
+</mapper>
+~~~
+
+- ## 测试
+
+~~~java
+    @Test
+    public void test3(){
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserMapper userMapper = (UserMapper) context.getBean("usermapper");
+        List<User> userList = userMapper.selectUser();
+        for (User user : userList) {
+            System.out.println(user);
+        }
+    }
+~~~
+
+## 运行结果
+
+- ## 数据成功插入 而没有删除，没有保证原子性
+
+## Spring 的两种事务实现机制
+
+- **编程式事务管理：** 通过Transaction Template手动管理事务，实际应用中很少使用，
+- **使用XML配置声明式事务：** 推荐使用（代码侵入性最小），实际是通过AOP实现
+
+## Spring 声明式事务
+
+/8  
