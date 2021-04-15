@@ -470,9 +470,180 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 ## 注解自动装配
 
+- ## 导入约束。配置注解的支持
+
+~~~xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+    
+	<bean id="dog" class="com.spring.pojo.Dog"/>
+    <bean id="cat" class="com.spring.pojo.Cat"/>
+    <bean id="people" class="com.spring.pojo.People" />
+    
+    <context:annotation-config/><!--注解支持-->
+
+</beans>
+~~~
+
+- ## People类注解
+
+  - AutoWired 默认按类型ByType装配 使用Qualifier可以改成ByName 方式装配
+
+~~~java
+public class People {
+    @Autowired
+    private Cat cat;
+    @Autowired
+    private Dog dog;
+
+    private String name;
+
+    public Cat getCat() {
+        return cat;
+    }
+
+    public void setCat(Cat cat) {
+        this.cat = cat;
+    }
+
+    public Dog getDog() {
+        return dog;
+    }
+
+    public void setDog(Dog dog) {
+        this.dog = dog;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "People{" +
+                "cat=" + cat +
+                ", dog=" + dog +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
+~~~
+
+- ## 测试类
+
+~~~java
+public class AnnoTest {
+    @Test
+    public void test1(){
+        ApplicationContext context = new ClassPathXmlApplicationContext("bean.xml");
+        People people = context.getBean("people",People.class);
+        people.getCat().yell();
+        people.getDog().yell();
+    }
+
+}
+~~~
+
+## @Qualifier
+
+~~~java
+public class People {
+    @Autowired
+    @Qualifier(value = "cat1")//ByName 自动装配 要求 bean.xml 中有 ID 为cat1 的Bean
+    private Cat cat;
+~~~
+
+## @Resource 注解
+
+- @Autowired先byType，结合@Qulifier 可做到ByName。@Resource先 byName，若找不到，会变为ByType寻找Bean，更加智能，也消耗更多资源。
+
+# 注解开发
+
+## @Componet 的使用
+
+~~~java
+//@Component 等价于：
+//<bean id="user" class="com.spring.pojo.User"/>
+@Component
+public class User {
+    @Value("testAnnoComponent")//用于给下面一行的属性赋值
+    public String name;
+}
+~~~
+
+- ## 使用注解需要指定扫描包
+
+~~~xml
+<!--指定扫描的包 扫描到的注解会生效    -->
+<context:component-scan base-package="com.spring.pojo"/>
+<context:annotation-config/>
+
+~~~
+
+
+
+## 衍生注解
+
+- dao 使用@repository 
+
+- controller 使用@Controller
+
+- service 使用 @Service
+
+  实际上作用和@Component一样: 注册bean
+
+## 作用域注解
+
+- ## @scope 
+
+- singleton：默认的，Spring会采用单例模式创建这个对象。关闭工厂 ，所有的对象都会销毁。
+-  prototype：多例模式。关闭工厂 ，所有的对象不会销毁。内部的垃圾回收机制会回收
+
+~~~java
+@Controller("user")
+@Scope("prototype")
+public class User {
+    @Value("秦疆")
+    public String name;
+}
+
+~~~
+
+# 使用java 注解配置
+
+- 需要在对应的类中加入@Component注解
+
+~~~java
+//配置类
+@Configuration
+@ComponentScan("com.spring.pojo")
+public class config {
+    @Bean
+    public User getUser(){
+        return new User();
+    }
+}
+//等价于 
+<beans>
+    <bean id="getUser" class="com.spring.pojo.User"/>
+</beans>
+~~~
+
+
+
 # AOP
 
-## 方式一
+## 方式一 配置增强类
 
 - ### 导入 织入包 的依赖
 
@@ -559,7 +730,7 @@ public class AfterLog implements AfterReturningAdvice {
 
 
 
-## 方式二 使用自定义类织入
+## 方式二 使用自定义切面织入
 
 - ### 自定义增强类
 
@@ -621,9 +792,9 @@ public class annotationPoi {
 
 ~~~xml
 <!--    方式三 注解实现AOP-->
-    <bean id="annotationPoi" class="com.spring.diy.annotationPoi"/>
+<bean id="annotationPoi" class="com.spring.diy.annotationPoi"/>
 <!--    注解支持-->
-    <aop:aspectj-autoproxy/>
+<aop:aspectj-autoproxy/>
 ~~~
 
 
@@ -861,4 +1032,47 @@ public class UserMapperImpl extends SqlSessionDaoSupport implements UserMapper {
 
 ## Spring 声明式事务
 
-/8  
+- ### 配置
+
+~~~XML
+
+<!--配置声明式事务-->
+<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <constructor-arg ref="datasource" />
+</bean>
+<!-- 结合AOP实现事务 切面切入   -->
+<!-- 配置事务通知advice  -->
+<tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+        <!--配置哪些方法使用什么样的事务,配置事务的传播特性-->
+        <tx:method name="add" propagation="REQUIRED"/>
+        <tx:method name="delete" propagation="REQUIRED"/>
+        <tx:method name="update" propagation="REQUIRED"/>
+        <tx:method name="search*" propagation="REQUIRED"/>
+        <tx:method name="get" read-only="true"/>
+        <tx:method name="*" propagation="REQUIRED"/>
+
+    </tx:attributes>
+</tx:advice>
+
+<!--配置aop 织入事务    -->
+<aop:config>
+    <aop:pointcut id="txPoi" expression="execution(* com.spring.mapper.*.* (..))"/>
+    <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoi"/>
+</aop:config>
+~~~
+
+- ### 测试类
+
+~~~java
+@Test
+public void test3(){
+    ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+    UserMapper userMapper = (UserMapper) context.getBean("usermapper");
+    List<User> userList = userMapper.selectUser();
+    for (User user : userList) {
+        System.out.println(user);
+    }
+}
+~~~
+
