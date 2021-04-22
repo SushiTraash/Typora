@@ -437,5 +437,146 @@ public class RestFulController {
 
 略，不重要
 
+# 接受请求参数和回显
 
+## BUG
+
+![image-20210421114055119](Spring MVC.assets/image-20210421114055119.png)
+
+- ## 要部署的项目记得build before launch
+
+- <img src="Spring MVC.assets/image-20210421114154371.png" alt="image-20210421114154371" style="zoom:150%;" />
+- ![image-20210421114226180](Spring MVC.assets/image-20210421114226180.png)
+- ![image-20210421114247036](Spring MVC.assets/image-20210421114247036.png)
+- 选择要部署的项目的war包
+- <img src="Spring MVC.assets/image-20210421114327478.png" alt="image-20210421114327478" style="zoom: 80%;" />
+
+## 请求参数处理
+
+1. ### 前端传入参数名于controller 对应方法中的参数名字一致时，不用处理
+
+   ~~~java
+   @Controller
+   @RequestMapping("/user")
+   public class UserController {
+       //url 为 http://localhost:8080/user/t1?name=...
+       @GetMapping("/t1")
+       public String test1(String name, Model model){
+           //1.接收前端参数
+           System.out.println("naem:"+name);
+           //2. 设置model 之后返回给前端
+           model.addAttribute("msg",name);
+           //3. 跳转
+           return "test1";
+       }
+   }
+   ~~~
+
+   
+
+2. ### 若想要指定某个参数从前端传入时的名字使用 @RequestParam
+
+   ~~~java
+   //使用@RequestParam("paraname")后 url 为 http://localhost:8080/user/t1?paraname=
+   @GetMapping("/t1")
+   public String test1(@RequestParam("paraname") String name, Model model){
+       //1.接收前端参数
+       System.out.println("naem:"+name);
+       //2. 设置model 之后返回给前端
+       model.addAttribute("msg",name);
+       //3. 跳转
+       return "test1";
+   }
+   ~~~
+
+   
+
+3. ### 如果方法传入的参数是个对象
+
+   ~~~java
+   /**对象传参
+        * 1.先将传进来的参数和方法的局部参数匹配，若匹配失败，进入下一步
+        * 2.若有对象，则匹配对象的字段名**/
+   @GetMapping("/t2")
+   public String test2(User user,Model model){
+       System.out.println(user);
+       return "test1";
+   }
+   ~~~
+
+## 数据回显（讲得过于简单，待补充）
+
+1. ### 使用ModelAndView
+
+2. ### 使用ModelMap(继承LinkedHaspMap)
+
+3. ### 使用Model 最常用、最简单
+
+# 乱码问题
+
+- ### encode.jsp
+
+~~~jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<form action="/encode/t1" method="get">
+    <input type="text" name="name">
+    <input type="submit">
+</form>
+</body>
+</html>
+~~~
+
+- ### encodeController.class (代码略)
+
+## 解决乱码
+
+1. 建立filter(继承Servlet 包下得 Filter) 使用过滤器，并且在web.xml里面注册filter
+
+   ~~~xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+            version="5.0">
+   //.....
+       <filter>
+           <filter-name>decoding</filter-name>
+           <filter-class>com.springmvc.filter.decodeFilter</filter-class>
+   
+       </filter>
+       <filter-mapping>
+           <filter-name>decoding</filter-name>
+           <url-pattern>/</url-pattern>
+       </filter-mapping>  
+   </web-app>
+   ~~~
+
+   
+
+2. 注意表单提交方法要使用get，如果使用 post提交表单还是会出错
+
+## 使用SpringMVC的过滤器
+
+~~~xml
+<filter>
+<filter-name>encoding</filter-name>
+<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+<init-param>
+<param-name>encoding</param-name>
+<param-value>utf-8</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>encoding</filter-name>
+<url-pattern>/</url-pattern>
+</filter-mapping>
+
+~~~
+
+# Json
 
