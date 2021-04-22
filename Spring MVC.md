@@ -621,7 +621,6 @@ public class UserController {
 
 
 //另一种写法
-    
 @RestController//使用这个注解修饰，相当于这个类所有方法都带了ResponseBody
 public class UserController {
     @RequestMapping(value = "/j1", produces = "application/json;charset=utf-8")
@@ -632,6 +631,38 @@ public class UserController {
         String strJson =mapper.writeValueAsString(user);
         return strJson;
     }
+    @RequestMapping("j2")
+    public String Json2() throws JsonProcessingException {
+        User user1= new User("1",12);
+        User user2= new User("2",12);
+        User user3= new User("3",12);
+        List<User> list = new ArrayList<>();
+        list.add(user1);
+        list.add(user2);
+        list.add(user3);
+        return new ObjectMapper().writeValueAsString(list);
+
+    }
+    @RequestMapping("j3")
+    public String Json3() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(new Date());
+    }
+
+//    //fastjson 的使用 有bug...
+//    @RequestMapping("j4")
+//    public String Json4(){
+//
+//        User user1= new User("1",12);
+//        User user2= new User("2",12);
+//        User user3= new User("3",12);
+//        List<User> list = new ArrayList<>();
+//        list.add(user1);
+//        list.add(user2);
+//        list.add(user3);
+//        String str = JSON.toJSONString(list);
+//        return str;
+//    }
+
 }
 ~~~
 
