@@ -580,3 +580,58 @@ public class RestFulController {
 
 # Json
 
+Json是一种前后端交互数据的数据格式、
+
+## BUG
+
+使用Idea的Refactor 导致Web.xml中DispatchServlet配置出错
+
+~~~xml
+<servlet>
+    <servlet-name>springmvc</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>contextConfigLocation</param-name>
+ <!--注意此处应该为 springmvc-servlet.xml,使用idea复制别的项目的web.xml文件时，idea自动refactor导致出错！！！-->
+        <param-value>classpath:com.springmvc-servlet.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+~~~
+
+
+
+## 使用Json
+
+- ## UserController
+
+~~~java
+@Controller
+public class UserController {
+    @RequestMapping(value = "/j1", produces = "application/json;charset=utf-8")
+    @ResponseBody//使用这个注解，返回的字符串不会走视图解析器，而是直接将返回的字符串传递给前端
+    public String Json1() throws JsonProcessingException {
+        User user = new User("哈哈",12);
+        ObjectMapper mapper = new ObjectMapper();
+
+        String strJson =mapper.writeValueAsString(user);
+        return strJson;
+    }
+}
+
+
+//另一种写法
+    
+@RestController//使用这个注解修饰，相当于这个类所有方法都带了ResponseBody
+public class UserController {
+    @RequestMapping(value = "/j1", produces = "application/json;charset=utf-8")
+    public String Json1() throws JsonProcessingException {
+        User user = new User("笑嘻了",12);
+        ObjectMapper mapper = new ObjectMapper();
+
+        String strJson =mapper.writeValueAsString(user);
+        return strJson;
+    }
+}
+~~~
+
