@@ -526,8 +526,6 @@ public String updateBook(Books books){
 }
 ~~~
 
-
-
 - ### 页面 表单form
 
 - ~~~html
@@ -562,7 +560,86 @@ public String updateBook(Books books){
 
     3：需要注意的是，前端提交的数据字段名与后端对象里的**字段名**一定**得相同**。
 
+## 删除书籍 RESTful风格
 
+- ### 后端controller
+
+~~~java
+//restful风格
+@RequestMapping("/deleteBook/{bid}")
+public String deleteBookREST(@PathVariable("bid") int id){
+    bookService.deleteBookById(id);
+    return "redirect:/book/allBook";
+}
+~~~
+
+- ### 前端代码
+
+~~~html
+ <a href="${pageContext.request.contextPath}/book/deleteBook/${books.id}">删除</a>
+~~~
+
+## 根据书籍名字搜索书籍 
+
+- ### 由于需要用到新的sql语句,所以要在mapper里增加新的接口，并且在xml中配置对应sql语句
+
+  ~~~java
+  Books searchBook(@Param("bookName") String bookName);
+  ~~~
+
+  ~~~xml
+  <select id="searchBook" resultType="Books">
+      select * from books where name = #{bookName}
+  </select>
+  ~~~
+
+- ### 增加新的service 接口以及其实现 ：service 以及serviceImpl
+
+  ~~~java
+  //实现
+  @Override
+      public Books searchBookByName(String name) {
+          return booksMapper.searchBook(name);
+      }
+  ~~~
+
+- ### 后端Controller
+
+  ~~~java
+  @RequestMapping("/searchBook")
+  public String searchBook(String bookName, Model model){
+  
+      List<Books> list = new ArrayList<>();
+      list.add(bookService.searchBookByName(bookName));
+      if(list.get(0) == null){//没有此书，进行报错
+          list = bookService.selectAllBooks();
+          model.addAttribute("error","没有这本书");
+  
+      }
+      System.out.println(list.size());
+      model.addAttribute("list",list);
+      return "allBook";
+  }
+  ~~~
+
+- ### 前端代码
+
+  ~~~html
+  <%--错误提示信息--%>
+  <div class="col-md-4 column">
+      <%--跳到增加书籍的页面--%>
+          <a class="btn btn-primary" href="${pageContext.request.contextPath}/book/toAddPage">添加书籍</a>
+          <a class="btn btn-primary" href="${pageContext.request.contextPath}/book/allBook">全部书籍</a>
+          <span style="color: red;font-weight: bold;">${error}</span>
+  </div>
+      
+  <form action="${pageContext.request.contextPath}/book/searchBook" method="post">
+        <input name="bookName" type="text" class="form-control" placeholder="输入查询书籍名称" >
+        <input type="submit" value="搜索" class="btn btn-primary">
+   </form>
+  ~~~
+
+  
 
 # BUG汇总
 
@@ -579,3 +656,56 @@ public String updateBook(Books books){
 - 没有build 项目，在tomcat --edit configuration里面设置
   - ![image-20210427211739789](SSM整合.assets/image-20210427211739789.png)
 
+## 删除功能中 直接return 和重定向的区别
+
+- ## 正确写法
+
+~~~java
+@RequestMapping("/searchBook")
+public String searchBook(String bookName, Model model){
+
+    List<Books> list = new ArrayList<>();
+    list.add(bookService.searchBookByName(bookName));
+    if(list.get(0) == null){//没有此书，进行报错
+        list = bookService.selectAllBooks();
+        model.addAttribute("error","没有这本书");
+		
+    }
+    System.out.println(list.size());
+    model.addAttribute("list",list);
+    return "allBook";
+}
+~~~
+
+- ### 错误写法
+
+~~~java
+@RequestMapping("/searchBook")
+public String searchBook(String bookName, Model model){
+
+    List<Books> list = new ArrayList<>();
+    list.add(bookService.searchBookByName(bookName));
+    if(list.get(0) == null){//没有此书，进行报错
+        model.addAttribute("error","没有这本书");
+       	return "redirect:/book/allBook";
+    }
+    System.out.println(list.size());
+    model.addAttribute("list",list);
+    return "allBook";
+}
+~~~
+
+### 区别直接返回和redirect 
+
+- 直接返回页面，则不会走后端controller中的：
+
+  ~~~java
+  @RequestMapping("/allBook")
+  public String selectAllBook(Model model){
+      List<Books> list = bookService.selecchuanrutAllBooks();
+      model.addAttribute("list",list);
+      return "allBook";
+  }
+  ~~~
+
+- 而redirect 会走一遍这个selectAllBook方法，此时model传递的error体现在了url中（使用get, ?error=没有这本书），参数没有被selectAllBook使用，使用只会显示所有书籍，但是没有报错

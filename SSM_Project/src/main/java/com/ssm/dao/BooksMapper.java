@@ -10,13 +10,14 @@ public interface BooksMapper {
     public int addBook(Books table);
 
     //删除
-    int deleteBookById(@Param("bookId") int id);
+    int deleteBookById(@Param("id") int id);
 
     //更新
     int updateBook(Books table);
 
     //查询
-    Books selectBookById(@Param("bookId") int id);
+    Books selectBookById(@Param("id") int id);
 
     List<Books> selectAllBooks();
+    Books searchBook(@Param("bookName") String bookName);
 }

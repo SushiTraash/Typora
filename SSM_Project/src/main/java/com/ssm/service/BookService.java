@@ -19,5 +19,5 @@ public interface BookService {
     Books selectBookById(int id);
 
     List<Books> selectAllBooks();
-
+    Books searchBookByName(String name);
 }
