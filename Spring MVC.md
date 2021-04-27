@@ -198,7 +198,8 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     
     
     <!--对应BeanNameUrlHandlerMapping 要进行的配置：URL映射为Bean的Id 来寻找controller-->
-    <bean id="/helloURL" class="com.springMVC.controller.HelloController"/><!--id 用于映射 用户输入的URL 到对应的controller-->
+    <bean id="/helloURL" class="com.springMVC.controller.HelloController"/>
+    <!--id 用于映射 用户输入的URL 到对应的controller-->
 </beans>
 ~~~
 
@@ -300,7 +301,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
 
 4. ## 配置Springmvc-servlet
 
-   - 注解扫描<context:component-scan base-package="com.springmvc.controller"/>
+   - 注解扫描<context:component-scan base-package="com.springmvc.controller"/>	
 
    - 设置不处理静态资源    < mvc:default-servlet-handler/>
 
