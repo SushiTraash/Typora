@@ -174,21 +174,33 @@ public interface BooksMapper {
     public int addBook(Books table);
 
     //删除
-    int deleteBookById(@Param("bookId") int id);
+    int deleteBookById(int id);
 
     //更新
     int updateBook(Books table);
-
     //查询
-    Books selectBookById(@Param("bookId") int id);
-
-    List<Books> selectAllBooks(@Param("bookId") int id);
+    Books selectBookById(@Param("id") int id);
+	//Books selectBookById(@Param("bookId") int id);如果使用这种形式 在mapper对应sql中要使用 #{bookId}
+    List<Books> selectAllBooks();
 }
 ~~~
 
-- ## mapper.xml
+## mapper.xml  输入输出映射总结
+
+- ### 输入映射总结（对象 或者属性 --->数据库字段 ）
+
+  - 对于一个属性，例如id ，可以使用@Param() 注解进行映射为别的名称
+  - 对于一个对象，例如User,使用map对各个属性分别进行映射（当然也可以分别用@Param（）映射比较麻烦）
+    - 注意：使用@Alias给对象 起别名不会影响到输入的映射，#{  }里的变量名仍然和实体类的属性相同
+
+- ### 输出结果映射总结（数据库字段 ---> 对象或者属性）
+
+  - 如果ResultType是一个属性，使用ResultType 映射为对于的类型即可
+  - 如果ResultType是一个对象，要使用ResultMap 将字段名分别映射为属性名
+    - 特别的，当数据库字段名和pojo实体类的属性名相同时，mybatis自动创造ResultMap
 
 ~~~xml
+<!--要注意，#{} 中 的变量要与pojo 实体类 中的属性同名 -->
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
@@ -202,12 +214,12 @@ public interface BooksMapper {
         delete form book where id = #{bookId};
     </delete>
     <update id="updateBook" parameterType="Books">
-        update books set name = #{bookName},count = #{bookCount},detail = #{bookDetail}
-        where id = #{bookId};
+        update books set name = #{name},count = #{count},detail = #{detail}
+        where id = #{id};
     </update>
     <select id="selectBookById" resultType="Books">
         select * from books
-        where id = #{bookId};
+        where id = #{id};
     </select>
     <select id="selectAllBooks" resultType="Books">
         select * from books;
@@ -471,5 +483,99 @@ public class BookServiceImpl implements BookService{
 </beans>
 ```
 
+# Controller层和视图层
 
+- ### 前端使用Bootstap做框架,controller添加对应方法即可
+
+- ### jsp页面代码看项目
+
+## 查询所有书籍
+
+~~~java
+@RequestMapping("/allBook")
+    public String selectAllBook(Model model){
+        List<Books> list = bookService.selectAllBooks();
+        model.addAttribute("list",list);
+        return "allBook";
+    }
+~~~
+
+## 增加书籍
+
+~~~java
+@RequestMapping("/addNewBook")
+public String addBook(Books books){
+    System.out.println("add:"+books);
+    bookService.addBook(books);
+    return "redirect:/book/allBook";
+}
+~~~
+
+
+
+## 修改书籍
+
+~~~java
+@RequestMapping("/updateBook")
+public String updateBook(Books books){
+
+
+    bookService.updateBook(books);
+
+    return "redirect:/book/allBook";
+}
+~~~
+
+
+
+- ### 页面 表单form
+
+- ~~~html
+      <form action="${pageContext.request.contextPath}/book/updateBook" method="post">
+  <%--        修改书籍失败的原因是： 没有设置id，修改的书籍对于id = 0  使用隐藏域解决这一问题--%>
+          <input type="hidden" name="id" value="${books.id}">
+          <div class="form-group">
+              <label >书籍名称:</label>
+              <input type="text" class="form-control" name="name" value="${books.name}" required>
+          </div>
+          <div class="form-group">
+              <label >书籍数量:</label>
+              <input type="text" class="form-control" name="count" value="${books.count}" required>
+          </div>
+          <div class="form-group">
+              <label >书籍描述:</label>
+              <input type="text" class="form-control" name="detail" value="${books.detail}" required>
+          </div>
+  
+          <input type="submit" class="form-control" value="修改">
+  
+      </form>
+  ~~~
+
+- ### form 表单输入的字段可以转化为对象传递给后端，规则如下：
+
+  - ## 不使用Ajax或者vue，前端也可以将对象数据送到后端
+
+    1：**前端提交字段数据**（可以是from，也可以是get请求，只要能将字段数据发送到后端即可）。
+
+    2：**后端**用**对象接收数据**，在此过程中，框架会自动将请求里的字段名与对象里的字段名进行匹配并赋值。
+
+    3：需要注意的是，前端提交的数据字段名与后端对象里的**字段名**一定**得相同**。
+
+
+
+# BUG汇总
+
+## 500错误
+
+- sql语法错误
+- sql语句里的 #{ } 使用的变量不正确
+
+## 404错误
+
+- artifact 里面 lib文件夹缺少依赖
+  - ![image-20210427211828300](SSM整合.assets/image-20210427211828300.png)
+  - ![image-20210427211849935](SSM整合.assets/image-20210427211849935.png)
+- 没有build 项目，在tomcat --edit configuration里面设置
+  - ![image-20210427211739789](SSM整合.assets/image-20210427211739789.png)
 
