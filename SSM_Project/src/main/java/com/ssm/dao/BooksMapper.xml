@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.dao.BooksMapper">
+    <insert id="addBook" parameterType="Books">
+        insert int ssmproject.books
+        values (#{id},#{name},#{count},#{detail});
+    </insert>
+    <delete id="deleteBookById" >
+        delete form book where id = #{bookId};
+    </delete>
+    <update id="updateBook" parameterType="Books">
+        update books set name = #{bookName},count = #{bookCount},detail = #{bookDetail}
+        where id = #{bookId};
+    </update>
+    <select id="selectBookById" resultType="Books">
+        select * from books
+        where id = #{bookId};
+    </select>
+    <select id="selectAllBooks" resultType="Books">
+        select * from books;
+    </select>
+</mapper>

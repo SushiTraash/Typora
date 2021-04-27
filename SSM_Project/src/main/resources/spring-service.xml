@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--  1.扫描包下注解@component  -->
+    <context:component-scan base-package="com.ssm.service"/>
+
+
+    <bean id="BookServiceImpl" class="com.ssm.service.BookServiceImpl">
+        <!--SetBooksMapper方法的名字 name 是booksMapper     要注入的ref是dao层的BooksMapper   -->
+        <property name="booksMapper" ref="booksMapper"/><!--这行用于注入-->
+    </bean>
+    <!--配置事务管理器，注入数据源-->
+    <bean id="tranctionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--注入数据源        -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>
