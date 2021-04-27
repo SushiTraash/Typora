@@ -33,7 +33,7 @@ public class userServiceImpl implements userService{
 
 ![container magic](Spring.assets/container-magic.png)
 
-## 使用案例
+## Spring作用以及使用案例
 
 Configuration Metadata 配置元数据 可以用xml来配置 
 
@@ -567,7 +567,7 @@ public class People {
 
 - @Autowired先byType，结合@Qulifier 可做到ByName。@Resource先 byName，若找不到，会变为ByType寻找Bean，更加智能，也消耗更多资源。
 
-# 注解开发
+# 注解开发 component-scan
 
 ## @Componet 的使用
 
