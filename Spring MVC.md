@@ -667,3 +667,43 @@ public class UserController {
 }
 ~~~
 
+# Ajax使用
+
+## 下载Jquery到web文件夹下
+
+![image-20210428211134637](Spring MVC.assets/image-20210428211134637.png)
+
+## 使用Ajax
+
+~~~jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+  <head>
+    <title>$Title$</title>
+      <%--引入jquery--%>
+    <script src="${pageContext.request.contextPath}/static/js/jquery-3.6.0.js"></script>
+      <%-- $ 代表jquery --%>
+    <script>
+      function refresh(){
+        $.post({
+            url:"${pageContext.request.contextPath}/a1",
+            data:{"name": $("#inputName").val()},
+            <%--输入映射，前者为后端方法使用入口参数，后者为前端输入变量--%>
+            success: function (data) {
+                alert(data);
+            }
+        })
+      }
+    </script>
+  </head>
+  <body>
+  <input type="text" id="inputName" onblur="refresh()"><%--输入 变量名称--%>
+  </body>
+</html>
+
+~~~
+
+
+
+
+

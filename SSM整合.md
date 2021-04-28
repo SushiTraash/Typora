@@ -656,6 +656,10 @@ public String deleteBookREST(@PathVariable("bid") int id){
 - 没有build 项目，在tomcat --edit configuration里面设置
   - ![image-20210427211739789](SSM整合.assets/image-20210427211739789.png)
 
+## Class Not Found
+
+- ### 类似404 创建lib目录，导入依赖
+
 ## 删除功能中 直接return 和重定向的区别
 
 - ## 正确写法

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iframe</title>
+    <script>
+        function loadIframe(){
+            var url = document.getElementById("url").value;
+            document.getElementById("iframeTest").src = url;
+        }
+    </script>
+</head>
+<body>
+<div>
+    <p>请输入地址：</p>
+    <p>
+        <input type="text" id = "url" value="https://www.youtube.com/watch?v=uhyxfqvNhC8">
+        <input type="submit" value="提交" onclick="loadIframe()">
+    </p>
+    <div>
+        <iframe id="iframeTest" style="width: 100%;height: 400px"> </iframe>
+    </div>
+</div>
+</body>
+</html>
