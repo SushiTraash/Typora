@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#006BEE</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="w">#FFFFFF</color>
+    <color name="bord">#A39F9F</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="tm">#00FFFFFF</color>
+    <color name="red">#43FF0000</color>
+    <color name="red_r">#FF0000</color>
+    <color name="gp_main">#4CAF50</color>
+    <color name="blue_m">#4FB5CF</color>
+    <color name="buy_show">#AAA9A9</color>
+    <color name="bod_m">#EAE5E5</color>
+
+</resources>

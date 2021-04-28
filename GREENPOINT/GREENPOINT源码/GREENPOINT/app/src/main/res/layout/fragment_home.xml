@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/w"
+    tools:context=".ui.home.HomeFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="729dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:id="@+id/imageView34"
+                android:layout_width="match_parent"
+                android:layout_height="197dp"
+                android:background="@drawable/plant"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <TextView
+                android:id="@+id/textView72"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="绿点积分"
+                android:textSize="18sp"
+                android:textStyle="bold"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageView34" />
+
+            <TextView
+                android:id="@+id/textView73"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="88dp"
+                android:text="可用积分"
+                app:layout_constraintEnd_toEndOf="@+id/textView72"
+                app:layout_constraintStart_toStartOf="@+id/textView72"
+                app:layout_constraintTop_toBottomOf="@+id/textView72" />
+
+            <TextView
+                android:id="@+id/textView74"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11349"
+                android:textColor="@color/bord"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="@+id/textView73"
+                app:layout_constraintStart_toStartOf="@+id/textView73"
+                app:layout_constraintTop_toBottomOf="@+id/textView73" />
+
+            <TextView
+                android:id="@+id/textView75"
+                android:layout_width="99dp"
+                android:layout_height="33dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
+
+                android:background="@drawable/textview_round_border_green"
+                android:gravity="center"
+                android:text="连续签到1天"
+                android:textColor="#DAFFFFFF"
+                app:layout_constraintBottom_toBottomOf="@+id/textView74"
+                app:layout_constraintEnd_toStartOf="@+id/textView74"
+                app:layout_constraintTop_toBottomOf="@+id/textView73"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageView
+                android:id="@+id/imageView35"
+                android:layout_width="29dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/message"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView34"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.497" />
+
+            <ImageView
+                android:id="@+id/imageView36"
+                android:layout_width="339dp"
+                android:layout_height="136dp"
+                android:layout_marginTop="4dp"
+                android:src="@drawable/textview_round_border_w"
+                app:layout_constraintEnd_toEndOf="@+id/imageView34"
+                app:layout_constraintHorizontal_bias="0.523"
+                app:layout_constraintStart_toStartOf="@+id/imageView34"
+                app:layout_constraintTop_toBottomOf="@+id/imageView34" />
+
+            <ImageView
+                android:id="@+id/imageView38"
+                android:layout_width="342dp"
+                android:layout_height="306dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/textview_round_border_w"
+                app:layout_constraintEnd_toEndOf="@+id/imageView36"
+                app:layout_constraintStart_toStartOf="@+id/imageView36"
+                app:layout_constraintTop_toBottomOf="@+id/imageView36" />
+
+            <TextView
+                android:id="@+id/textView76"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="8dp"
+                android:text="积分任务"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/imageView36"
+                app:layout_constraintTop_toTopOf="@+id/imageView36" />
+
+            <TextView
+                android:id="@+id/textView77"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="180dp"
+                android:layout_marginLeft="180dp"
+                android:text="查看历史任务"
+                app:layout_constraintBottom_toBottomOf="@+id/textView76"
+                app:layout_constraintStart_toEndOf="@+id/textView76"
+                app:layout_constraintTop_toTopOf="@+id/textView76"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/textView78"
+                android:layout_width="71dp"
+                android:layout_height="30dp"
+                android:background="@drawable/textview_round_border_blue"
+                android:gravity="center"
+                android:text="领取任务"
+
+                android:textColor="@color/gp_main"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView37"
+                app:layout_constraintEnd_toEndOf="@+id/textView77"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/imageView37"
+                app:layout_constraintTop_toTopOf="@+id/imageView37"
+                app:layout_constraintVertical_bias="0.71" />
+
+            <ImageView
+                android:id="@+id/imageView37"
+                android:layout_width="71dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="28dp"
+                android:src="@drawable/sport"
+                app:layout_constraintStart_toStartOf="@+id/textView76"
+                app:layout_constraintTop_toBottomOf="@+id/textView76" />
+
+            <TextView
+                android:id="@+id/textView79"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:text="运动赚积分"
+                app:layout_constraintStart_toEndOf="@+id/imageView37"
+                app:layout_constraintTop_toTopOf="@+id/imageView37" />
+
+            <TextView
+                android:id="@+id/textView80"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="2688积分"
+                android:textColor="#EA750F"
+                app:layout_constraintStart_toStartOf="@+id/textView79"
+                app:layout_constraintTop_toBottomOf="@+id/textView79" />
+
+            <TextView
+                android:id="@+id/textView82"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="奖励2688积分"
+                app:layout_constraintStart_toStartOf="@+id/textView80"
+                app:layout_constraintTop_toBottomOf="@+id/textView80" />
+
+            <TextView
+                android:id="@+id/textView83"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="获取更多积分"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/textView76"
+                app:layout_constraintTop_toTopOf="@+id/imageView38" />
+
+            <ImageView
+                android:id="@+id/imageView40"
+                android:layout_width="88dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/pay"
+                app:layout_constraintStart_toStartOf="@+id/textView83"
+                app:layout_constraintTop_toBottomOf="@+id/textView83" />
+
+            <ImageView
+                android:id="@+id/imageView43"
+                android:layout_width="88dp"
+                android:layout_height="68dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:src="@drawable/more_m"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView44"
+                app:layout_constraintStart_toEndOf="@+id/imageView44"
+                app:layout_constraintTop_toTopOf="@+id/imageView44" />
+
+            <ImageView
+                android:id="@+id/imageView44"
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:src="@drawable/love_s"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView45"
+                app:layout_constraintStart_toEndOf="@+id/imageView45"
+                app:layout_constraintTop_toTopOf="@+id/imageView45" />
+
+            <ImageView
+                android:id="@+id/imageView45"
+                android:layout_width="88dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/fina"
+                app:layout_constraintStart_toStartOf="@+id/textView99"
+                app:layout_constraintTop_toBottomOf="@+id/textView99" />
+
+            <ImageView
+                android:id="@+id/imageView41"
+                android:layout_width="88dp"
+                android:layout_height="68dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:src="@drawable/go"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView42"
+                app:layout_constraintStart_toEndOf="@+id/imageView42"
+                app:layout_constraintTop_toTopOf="@+id/imageView42"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageView
+                android:id="@+id/imageView42"
+                android:layout_width="88dp"
+                android:layout_height="68dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:src="@drawable/add_m"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView40"
+                app:layout_constraintStart_toEndOf="@+id/imageView40"
+                app:layout_constraintTop_toTopOf="@+id/imageView40"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/textView98"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="到店支付 >"
+                android:textColor="@color/gp_main"
+                app:layout_constraintStart_toStartOf="@+id/imageView40"
+                app:layout_constraintTop_toBottomOf="@+id/imageView40" />
+
+            <TextView
+                android:id="@+id/textView100"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="去会员首页看看"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textView101"
+                app:layout_constraintTop_toBottomOf="@+id/textView101" />
+
+            <TextView
+                android:id="@+id/textView101"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="更多惊喜 >"
+                android:textColor="@color/gp_main"
+                app:layout_constraintStart_toStartOf="@+id/imageView43"
+                app:layout_constraintTop_toBottomOf="@+id/imageView43" />
+
+            <TextView
+                android:id="@+id/textView102"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="每月最高15积分"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textView103"
+                app:layout_constraintTop_toBottomOf="@+id/textView103" />
+
+            <TextView
+                android:id="@+id/textView103"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="爱心捐赠 >"
+                android:textColor="@color/gp_main"
+                app:layout_constraintStart_toStartOf="@+id/imageView44"
+                app:layout_constraintTop_toBottomOf="@+id/imageView44" />
+
+            <TextView
+                android:id="@+id/textView104"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="财富生活享积分"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textView105"
+                app:layout_constraintTop_toBottomOf="@+id/textView105" />
+
+            <TextView
+                android:id="@+id/textView105"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="数字金融 >"
+                android:textColor="@color/gp_main"
+                app:layout_constraintStart_toStartOf="@+id/imageView45"
+                app:layout_constraintTop_toBottomOf="@+id/imageView45" />
+
+            <TextView
+                android:id="@+id/textView106"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="绿色出行低碳环保"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textView107"
+                app:layout_constraintTop_toBottomOf="@+id/textView107" />
+
+            <TextView
+                android:id="@+id/textView107"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="出行 >"
+                android:textColor="@color/gp_main"
+                app:layout_constraintStart_toStartOf="@+id/imageView41"
+                app:layout_constraintTop_toBottomOf="@+id/imageView41" />
+
+            <TextView
+                android:id="@+id/textView108"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="每月最高80积分"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textView109"
+                app:layout_constraintTop_toBottomOf="@+id/textView109" />
+
+            <TextView
+                android:id="@+id/textView109"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="充值缴费 >"
+                android:textColor="@color/gp_main"
+                app:layout_constraintStart_toStartOf="@+id/imageView42"
+                app:layout_constraintTop_toBottomOf="@+id/imageView42" />
+
+            <TextView
+                android:id="@+id/textView99"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="实体店付款有积分"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textView98"
+                app:layout_constraintTop_toBottomOf="@+id/textView98" />
+
+            <TextView
+                android:id="@+id/textView110"
+                android:layout_width="179dp"
+                android:layout_height="145dp"
+                app:layout_constraintEnd_toEndOf="@+id/imageView38"
+                app:layout_constraintStart_toStartOf="@+id/imageView38"
+                app:layout_constraintTop_toBottomOf="@+id/imageView38" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

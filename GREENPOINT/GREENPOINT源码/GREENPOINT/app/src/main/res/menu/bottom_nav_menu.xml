@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+    >
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/gp"
+        android:title="绿点" />
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/com_g"
+        android:title="论坛" />
+
+    <item
+        android:id="@+id/navigation_notifications"
+        android:icon="@drawable/job"
+        android:title="招聘" />
+
+
+    <item
+        android:id="@+id/Store"
+        android:icon="@drawable/shop"
+        android:title="商城" />
+
+
+    <item
+        android:id="@+id/power"
+        android:icon="@drawable/my1"
+        android:title="我" />
+
+</menu>
