@@ -1,5 +1,3 @@
-
-
 # SpringBoot 作用
 
 ## @Conditonal 注解
@@ -154,3 +152,5 @@ public interface Condition {
 - ### debug 查看dispatchServlet 斷點，發現自定義的視圖解析器被加載到了resolvers中
 
 ![image-20210525223504574](SpringBoot.assets/image-20210525223504574.png)
+
+## xxxCofiguration類的作用
