@@ -1,3 +1,5 @@
+
+
 # SpringBoot 作用
 
 ## @Conditonal 注解
@@ -85,5 +87,70 @@ public interface Condition {
 
 ![image-20210524210350634](SpringBoot.assets/image-20210524210350634.png)
 
+- ### AutoConfuguration: @EnableConfigurationProperties({ServerProperties.class})  注解引入对于的属性类Properties
+
+![image-20210525204006284](SpringBoot.assets/image-20210525204006284.png)
+
+- ### 	Properties中是可以在yaml或者properties文件中赋值的属性
+
+- ### @ConfigurationProperties 注解中的prefix指明了配置的前缀为server
+
+- <img src="SpringBoot.assets/image-20210525204419479.png" alt="image-20210525204419479" style="zoom:67%;" />
+
+- properties文件：
+
+- <img src="SpringBoot.assets/image-20210525204737620.png" alt="image-20210525204737620" style="zoom:67%;" />
+
+  
+
 # SpringBoot web 开发
 
+## web项目结构复习
+
+<img src="SpringBoot.assets/bVbes4j" alt="clipboard.png" style="zoom: 67%;" />
+
+- java和resources文件夹下的文件都会放在编译后的classes文件夹下，pom引入的依赖都在lib下，编译器WEB-INF下的文件编译后还是在WEB-INF下
+
+## 静态资源路径
+
+静态资源自动配置路径：
+
+- webjars
+- resources文件夹下：public <static <resource (加载优先级)
+
+## 首页 
+
+### 静态资源配置首页
+
+![image-20210525211459036](SpringBoot.assets/image-20210525211459036.png)
+
+### 使用template 模板引擎 thymeleaf
+
+- ### 导入依赖
+
+  ~~~xml
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+  </dependency>
+  ~~~
+
+  
+
+- ### thymeleaf语法
+
+  ~~~html
+  <div th:text="${msg}">
+      <!-- th:  thymeleaf-->
+  </div>
+  ~~~
+
+## MVC配置
+
+### spring mvc 拓展
+
+![image-20210525223318623](SpringBoot.assets/image-20210525223318623.png)
+
+- ### debug 查看dispatchServlet 斷點，發現自定義的視圖解析器被加載到了resolvers中
+
+![image-20210525223504574](SpringBoot.assets/image-20210525223504574.png)
