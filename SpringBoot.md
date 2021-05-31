@@ -371,3 +371,42 @@ xxxAutoConfiguration ---> 组件 --- > xxxProperties --->yaml 或 properties
 #   配置文件
 
 可以使用yaml 或者properties 。相同属性在两种文件中都被配置的话，properties文件中的属性优先有效。yaml 语法不赘述，找教程即可。 
+
+# web开发
+
+## 静态资源
+
+1. ### 静态资源路径 static-path-pattern 修改访问静态资源的url前缀
+
+- 对于一个请求，springboot先找有没有对于的controller处理对应的url
+- 如果没有对应conroller，再查找有没有对应的静态资源
+- 如果没有对应静态资源，报404错误
+
+~~~yaml
+spring:
+  mvc:
+	static-path-pattern: "/resources/**"
+~~~
+
+2. ### 静态资源位置 static-locations  存放静态资源的路径，可以配置多个
+
+~~~yaml
+spring:
+  web:
+    resources:
+      static-locations: [classpath:/haha/,classpath:/xixi/] #路径为resources下的xixi和haha注意classpath: 冒号后面不带空格
+~~~
+
+3. ### webjar 
+
+   - /webjars/** 前缀路径访问被打包成war包的jar包 例如： /webjars/jquery/jquery.min.js
+
+## 欢迎页
+
+在静态资源中的index.html默认作为首页。但是要注意不要更改静态资源路径pattern，否则index无法访问，不会成为主页。
+
+## 自定义Favicon
+
+不重要，用到再找教程
+
+## 静态资源配置原理

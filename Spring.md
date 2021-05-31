@@ -606,7 +606,7 @@ public class User {
 
 - ## @scope 
 
-- singleton：默认的，Spring会采用单例模式创建这个对象。关闭工厂 ，所有的对象都会销毁。
+- singleton：默认的，Spring会采用单例模式创建这个对象。关闭 工厂 ，所有的对象都会销毁。
 -  prototype：多例模式。关闭工厂 ，所有的对象不会销毁。内部的垃圾回收机制会回收
 
 ~~~java
