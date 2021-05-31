@@ -85,7 +85,7 @@ public interface Condition {
 
 ![image-20210524210350634](SpringBoot.assets/image-20210524210350634.png)
 
-- ### AutoConfuguration: @EnableConfigurationProperties({ServerProperties.class})  注解引入对于的属性类Properties
+- ### AutoConfuguration: @EnableConfigurationProperties({ServerProperties.class})  注解引入对应的属性类Properties
 
 ![image-20210525204006284](SpringBoot.assets/image-20210525204006284.png)
 
@@ -153,7 +153,9 @@ public interface Condition {
 
 ![image-20210525223504574](SpringBoot.assets/image-20210525223504574.png)
 
-## xxxCofiguration類的作用
+## xxxProperties類 的作用
+
+配合@ConfigurationProperties 实现配置绑定：xxxProperties类中的属性和配置文件中特定前缀prefix的属性绑定
 
 # 入门部分
 
@@ -175,7 +177,7 @@ public interface Condition {
 
   <img src="SpringBoot.assets/image-20210527104551983.png" alt="image-20210527104551983" style="zoom: 50%;" />
 
-### @configuration作用
+### @Configuration作用
 
 1. ### @configration 用于配置bean，单例模式
 
@@ -206,11 +208,11 @@ public interface Condition {
 
 - ### 用于导入beans.xml文件，解析并且构建beans.xml 中的bean
 
-## 配置绑定注解
+## 配置绑定注解 
 
 ### 作用： 
 
-- ### 读取yaml 或者 properties文件中的属性，并且在容器中
+- ### 配置绑定类里面的属性和配置文件里对应的属性绑定。读取yaml 或者 properties文件中的属性，并且在容器中创建组件。
 
 2种用法：
 
@@ -218,7 +220,7 @@ public interface Condition {
 
    ~~~java
    @ConfigurationProperties(prefix = "mycar")
-   public class car{
+   public class carProperties{
        //...
    }
    
@@ -240,7 +242,7 @@ public interface Condition {
    //配置文件：application.yaml application.properties
    //在配置文件中，使用mycar前缀配置这个类
    @ConfigurationProperties(prefix = "mycar")
-   public class car{
+   public class carProperties{
        //...
    }
    ~~~
@@ -304,3 +306,68 @@ getAutoConfigurationEntry-->getCandidateConfigurations-->loadFactoryNames-->load
 
 ![image-20210527215102152](SpringBoot.assets/image-20210527215102152.png)
 
+- 给@Bean 方法传入一个对象参数，那么spring就会自动在容器中找对应的对象，旧版Spring的MultypartResolver
+
+  
+
+### 总结：
+
+- SpringBoot会加载中所有的组件（AutoConfigurationImportSelector 中的SpringFactoriesLoader） 自动配置类 xxxAutoConfiguratuin，但是不是所有组件都会生效
+- @Conditional衍生出来的注解决定了加载了的组件是否生效，生效的组件才会装载到Spring容器中。组件都有默认绑定配置 xxxProperties。xxxProperties和配置文件绑定
+- SpringBoot 在底层配置使用默认参数配置了所有的组件，但是用户的配置更优先
+  - 使用@Bean 装载组件
+  - @xxxProperties 配置绑定，用户在yaml或properties配置文件中配置组件属性
+
+xxxAutoConfiguration ---> 组件 --- > xxxProperties --->yaml 或 properties
+
+## 最佳实践
+
+- 引入对应场景的starter
+
+- 查看生效组件
+
+  - debug = true Positive :生效组件 Negative: 不生效
+
+    ![image-20210530142201621](SpringBoot.assets/image-20210530142201621.png)
+
+- 修改配置
+
+  - 看官方文档---Application Properties
+  - 使用@Bean、@Component 自己装载组件
+  - xxxCustomizer
+
+# 开发技巧
+
+1. ## lombok
+
+   ~~~java
+   @Data //getter setter
+   @AllArgsConstructor //全参构造器
+   @NoArgsConstructor //无参构造器
+   @ToString //重写ToString方法
+   @EqualsAndHashCode//重写equals 和hascode方法 ，使用类属性字段
+   @slf4j
+   public class test{
+       public Integer id;
+       public String name;
+   }
+   
+   ~~~
+
+2. ## Dev-tools
+
+   实际上是重启，如果要实现热更新，使用JRebel
+
+   ~~~xml
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-devtools</artifactId>
+       <optional>true</optional>
+   </dependency>
+   ~~~
+
+3. ## Spring Initializer IDEA 自带
+
+#   配置文件
+
+可以使用yaml 或者properties 。相同属性在两种文件中都被配置的话，properties文件中的属性优先有效。yaml 语法不赘述，找教程即可。 
