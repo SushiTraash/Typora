@@ -703,7 +703,50 @@ public class UserController {
 
 ~~~
 
+#  DispatcherServlet 原理 ----雷神
 
+## Servlet
+
+### Servlet概念
+
+- ### 广义上，servlet是一套标准。狭义上servlet就是实现了servlet接口的类（Servlet就是一个接口）。Servlet实例由Sevlet容器创建（Tomcat就是一个servlet容器）
+
+### servlet作用
+
+1. ### 接收请求
+
+2. ### 处理请求
+
+3. ### 响应 
+
+### servlet使用关键点
+
+1. ### 继承实现servlet接口
+
+   - service方法是关键,注意参数中传入的ServletRequest和ServletResponse是对请求和响应报文的接口，具体调用的时候会传入对应接口的包装类HttpServletResquestWrapper和HttpServletResponseWrapper,封装好了http报文格式、报文头。
+
+   - 其他方法如init中的ServletConfig 参数是servlet的在web.xml中的配置信息。
+
+   - ServletConfig可以通过get方法获得 ServletContext。
+
+   - ServletContext 作用 (一个context 代表整个web项目)
+
+     - 获取web项目的配置信息，获取web项目初始化参数。 能获取在web.xml中 <context-param/> 标签中的参数
+     - 获取项目的路径。 url结构： （tomcat路径） localhost:8080 / （项目路径） / (资源路径) 
+     - 获取资源的真实路径
+     - 用于共享数据，类似全局变量
+
+     
+
+2. ### 在web.xml中注册、配置servlet
+
+   servlet的名字(相当于别名)、全限定类名和映射路径
+
+- 注意：服务器先找对应url的静态资源，找不到再交给servlet找动态资源
+
+  
+
+## DispatcherServlet
 
 
 
