@@ -106,11 +106,11 @@ route add default gw 192.168.1.250
 
 ![image-20210528180041296](Linux.assets/image-20210528180041296.png)
 
-- ### Destination 对应目的IP ；如果在同网段：对应目的MAC
+- ### Destination 对应目的IP ；如果在同网段：填入目的MAC
 
   目的IP地址
 
-- ### Gateway  对应目的Mac；如果在不同网段：对应目的MAC
+- ### Gateway  对应目的Mac；如果在不同网段：填入目的MAC
 
   网关，指明下一跳路由器的IP地址。这个IP地址通过ARP协议获取对应路由器的MAC地址用于填进IP数据报的**目的MAC地址**。
 
