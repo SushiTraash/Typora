@@ -161,11 +161,20 @@ public interface Condition {
 
 ## 底层注解
 
-### @SpringBootApplication 
+### @SpringBootApplication   启动主程序
 
-这个注解相当于 三个注解： @SpringBootConfigura...下面三个画横线的注解（前面四个是元注解，不重要）
+- 这个注解相当于 三个注解： @SpringBootConfigura...下面三个画横线的注解（前面四个是元注解，不重要）
 
 <img src="SpringBoot.assets/image-20210527102049995.png" alt="image-20210527102049995" style="zoom:67%;" />
+
+默认扫描Bean的路径是 主程序所在包及其子包
+
+- ## 修改bean扫描路径：
+  - ### 方式一：![image-20210722132628325](黑马SpringBoot.assets/image-20210722132628325.png)
+
+  - ### 方式二：ComponentScan![image-20210722133103662](黑马SpringBoot.assets/image-20210722133103662.png)
+
+    ​	
 
 ### @Configuration 
 
@@ -177,7 +186,8 @@ public interface Condition {
 
   <img src="SpringBoot.assets/image-20210527104551983.png" alt="image-20210527104551983" style="zoom: 50%;" />
 
-### @Configuration作用
+- ### @Configuration作用
+
 
 1. ### @configration 用于配置bean，单例模式
 
@@ -192,21 +202,18 @@ public interface Condition {
 
 ### @Import
 
-### 作用
-
-- ### 用于导入类，容器会创建导入的组件，@import 导入组件的名字是类的全限定类名
+- ### 作用
+  - ### 用于导入类，容器会创建导入的组件，@import 导入组件的名字是类的全限定类名
 
 ### @Conditional
 
-### 作用
-
-- ### 是@Conditionalonxxx的底层实现，根据某种条件决定是否被构建 @conditional 修饰的组件
+- ### 作用
+  - ### 是@Conditionalonxxx的底层实现，根据某种条件决定是否被构建 @conditional 修饰的组件
 
 ### @ImportResource
 
-### 作用
-
-- ### 用于导入beans.xml文件，解析并且构建beans.xml 中的bean
+- ### 作用
+  - ### 用于导入beans.xml文件，解析并且构建beans.xml 中的bean
 
 ## 配置绑定注解 
 
