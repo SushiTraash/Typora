@@ -1,5 +1,41 @@
 # Linux
 
+## docker安装
+
+https://docs.docker.com/engine/install/centos/
+
+~~~shell
+ sudo yum install -y yum-utils
+ sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+ ##安装docker
+ sudo yum install docker-ce docker-ce-cli containerd.io
+ ##启动docker
+ sudo systemctl start docker
+###开机自启动
+sudo systemctl enable docker
+ ##检查是否正确安装
+ sudo docker run hello-world
+ ###检查镜像
+ sudo docker images
+~~~
+
+## docker 安装Mysql
+
+~~~shell
+###下载mysql5.7
+docker pull mysql:5.7
+##安装镜像
+docker run -p 3306:3306 --name mysql  -v /mydata/mysql/log:/var/log/mysql  -v /mydata/mysql/data:/var/lib/mysql  -v /mydata/mysql/conf:/etc/mysql  -e MYSQL_ROOT_PASSWORD=root  -d mysql:5.7
+##运行mysql 客户端
+docker exec -it mysql /bin/bash
+~~~
+
+
+
+## docker 安装redis
+
 ### 云服务器使用：
 
 1. 修改root密码 
