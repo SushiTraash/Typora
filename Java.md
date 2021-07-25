@@ -1,4 +1,18 @@
-# Java
+# Java数据类型
+
+分为两大类：基本数据类型和引用数据类型
+
+## 基本数据类型 8 种
+
+#### 数值类型 byte int long float double
+
+#### 字符类型 char
+
+### 布尔类型 boolean
+
+## 引用数据类型 5 种
+
+类、接口、数组、枚举、标注
 
 # IO
 
@@ -49,7 +63,7 @@ Arrays.stream(arr1).boxed().toArray(Integer[]::new);
 
 - ~~~java
      public static void main(String[] args){
-    
+        
           int[] H = {1,2,3,1};
           
           //普通数组排序
@@ -78,11 +92,11 @@ Arrays.stream(arr1).boxed().toArray(Integer[]::new);
           map.put(2,"2");
           ArrayList<Integer> mapkey = new ArrayList<>(map.keySet());
           mapkey.sort((a,b) -> a > b ? -1 : 1);
-    
+        
           for (Integer integer : mapkey) {
               System.out.println( map.get(integer));
           }
-    
+        
       }
   ~~~
 
