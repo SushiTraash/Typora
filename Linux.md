@@ -88,6 +88,16 @@ yum install telnet telnet-server xinetd -y
 
 ## 汇总
 
+- 网络配置： ifconfig、 ip
+- 连通性探测： ping、 traceroute、 telnet、 mtr
+- 网络连接： netstat、 ss、 nc、 lsof
+- 流量统计： ifstat、 sar、 iftop
+- 交换与路由： arp、 arping、 vconfig、 route
+- 防火墙： iptables、 ipset
+- 域名： host、 nslookup、 dig、 whois
+- 抓包： tcpdump
+- 虚拟设备： tunctl、 brctl、 ovs
+
 - reset 网络配置指令： /etc/init.d/network restart
 
 ### 网络参数设置：ifconfig ifup ifdown route ip
