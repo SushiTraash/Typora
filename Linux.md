@@ -32,7 +32,9 @@ docker run -p 3306:3306 --name mysql  -v /mydata/mysql/log:/var/log/mysql  -v /m
 docker exec -it mysql /bin/bash
 ~~~
 
+## docker启动容器
 
+![image-20210804123000806](Linux.assets/image-20210804123000806.png)
 
 ## docker 安装redis
 
