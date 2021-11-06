@@ -4,7 +4,7 @@
 
 @conditional(? implement condition ) 括号中是实现condition接口的实现类
 
-假设一个 @Conditiona( ConditionImpl )
+假设一个 @Condition( ConditionImpl )
 
 ~~~java
 public class ConditionImpl implements Condition {
