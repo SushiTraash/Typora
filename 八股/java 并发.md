@@ -4,6 +4,12 @@
 
 
 
+![image-20211110151417231](java 并发.assets/image-20211110151417231.png)
+
+## 阻塞与非阻塞、同步与异步
+
+![image-20211111232251693](java 并发.assets/image-20211111232251693.png)
+
 ## 简述java内存模型（JMM） 
 
  java内存模型定义了程序中各种变量的访问规则。其规定所有变量都存储在主内存，线程均有自己的工作内存。
@@ -77,9 +83,11 @@
 ##  简述线程通信的方式 
 
 1.  volatile 关键词修饰变量，保证所有线程对变量访问的可见性。 
-2.  synchronized关键词。确保多个线程在同一时刻只能有一个处于方法或同步块中。 
-3.  wait/notify方法 
+2.  （其实可以归类为 wait/notify？？？ ）synchronized关键词。确保多个线程在同一时刻只能有一个处于方法或同步块中。 
+3.  wait/notify方法 必须synchronized
 4.  IO通信 
+5.  join方式
+6.  threadLocal
 
 ##  简述线程池 
 
@@ -99,7 +107,7 @@
 1.  corePoolSize：常驻核心线程数。超过该值后如果线程空闲会被销毁。 
 2.  maximumPoolSize：线程池能够容纳同时执行的线程[最大数]()。 
 3.  [keep]()AliveTime：线程空闲时间，线程空闲时间达到该值后会被销毁，直到只剩下 corePoolSize 个线程为止，避免浪费内存资源。 
-4.  workQueue：工作队列。 
+4.  workQueue：工作队列。 任务的阻塞队列
 5.  threadFactory：线程工厂，用来生产一组相同任务的线程。 
 6.  handler：拒绝策略。有以下几种拒绝策略： 
 
@@ -110,11 +118,12 @@
 
 ##  线程池创建方法 
 
-1.  newFixedThreadPool，创建固定大小的线程池。 
-2.  newSingleThreadExecutor，使用单线程线程池。 
-3.  newCachedThreadPool，maximumPoolSize 设置为 Integer 最大值，工作完成后会回收工作线程 
+1.  newFixedThreadPool，创建固定大小的线程池。  适合： 任务数确定，耗时长的场景。
+2.  newSingleThreadExecutor，使用单线程线程池。 适合：先来先服务
+3.  newCachedThreadPool，maximumPoolSize 设置为 Integer 最大值，工作完成后会回收工作线程  适合：线程数会不断增长
 4.  newScheduledThreadPool：支持定期及周期性任务执行，不回收工作线程。 
 5.  newWorkStealingPool：一个拥有多个任务队列的线程池。 
+6.  newSingleThreadScheduledExecutor 创建一个单线程执行程序，它可安排在给定延迟后运行命令或者定期地执行。线程池中最多执行1个线程，之后提交的线程活动将会排在队列中以此执行并且可定时或者延迟执行线程活动。
 
 ##  简述Executor框架 
 
@@ -169,6 +178,11 @@
  对于 Java 语言，没有直接的指针组件，一般也不能使用偏移量对某块内存进行操作。这些操作相对来讲是安全（safe）的。 
 
  Java 有个类叫 Unsafe 类，这个类类使 Java 拥有了像 C 语言的指针一样操作内存空间的能力，同时也带来了指针的问题。这个类可以说是 Java 并发开发的基础。 
+
+## 乐观锁和悲观锁区别
+
+- 乐观锁：乐观锁在操作数据时非常乐观，认为别人不会同时修改数据。因此乐观锁不会上锁，只是在执行更新的时候判断一下在此期间别人是否修改了数据：如果别人修改了数据则放弃操作，否则执行操作。
+- 悲观锁：悲观锁在操作数据时比较悲观，认为别人会同时修改数据。因此操作数据时直接把数据锁住，直到操作完成后才会释放锁；上锁期间其他人不能修改数据。
 
 ##  JAVA中的乐观锁与CAS[算法]() 
 
@@ -262,13 +276,35 @@
 2.  引入[红黑树]()结构，当某个槽内的元素个数超过8且 Node数组 容量大于 64 时，[链表]()转为[红黑树]()。 
 3.  使用了更加优化的方式统计集合内的元素数量。 
 
-##  Synchronized底层实现原理 
+##  Synchronized底层实现原理 （不对）
 
  Java 对象底层都关联一个的 monitor，使用 synchronized 时 JVM 会根据使用环境找到对象的 monitor，根据 monitor 的状态进行加解锁的判断。如果成功加锁就成为该 monitor 的唯一持有者，monitor 在被释放前不能再被其他线程获取。 
 
  synchronized在JVM编译后会产生monitorenter 和 monitorexit 这两个字节码指令，获取和释放 monitor。这两个字节码指令都需要一个引用类型的参数指明要锁定和解锁的对象，对于同步普通方法，锁是当前实例对象；对于静态同步方法，锁是当前类的 Class 对象；对于同步方法块，锁是 synchronized 括号里的对象。 
 
  执行 monitorenter 指令时，首先尝试获取对象锁。如果这个对象没有被锁定，或当前线程已经持有锁，就把锁的计数器加 1，执行 monitorexit 指令时会将锁计数器减 1。一旦计数器为 0 锁随即就被释放。 
+
+## Synchronized 锁升级流程
+
+### 偏向锁
+
+Mark Word 中线程ID指向其他线程时，检查是否要锁升级：
+
+- 检查指向 对应的线程是否存活，如果没有存活 则锁重偏向。
+- 否则检查对应线程是否继续持有这个锁，如果不再需要，锁重偏向。
+  - 否则偏向锁升级为轻量级锁
+
+### 轻量级锁
+
+多个线程对轻量级锁竞争时，可能要锁升级。自旋 等待拥有锁的线程释放锁，如果自旋超时仍然未释放 或者 来了第三个争夺锁的线程：轻量级锁升级为重量级锁。
+
+### 重量级锁
+
+Markword 指向Monitor ，monitor底层使用c++ 代码实现
+
+#### Monitor组成
+
+EntryList、WaitSet、owner。还有其他
 
 ##  Synchronized关键词使用方法 
 
