@@ -197,7 +197,7 @@ Parallel Scavenge 的老年代版本，基于标记整理算法实现
 
 ![image-20211113155211167](jvm.assets/image-20211113155211167.png)
 
-老年代收集器。基于标记清除算法实现。运行过程包括：
+老年代收集器。CMS收集器是基于标记-清除算法实现的。以获取最短回收停顿时间为目标。运行过程包括：
 
 1. 初始标记：标记GC Roots直接关联对象
 2. 并发标记：继续遍历引用
@@ -206,11 +206,15 @@ Parallel Scavenge 的老年代版本，基于标记整理算法实现
 
 优缺点：并发收集、低停顿。但是 对处理器资源敏感，需要占用处理器资源。老年代要预留空间，因为用户和GC线程并行。产生空间碎片。
 
+碎片解决：设置若干次FullGC后（可以为1次），进行碎片整理。碎片整理时不能并发，停顿变长
+
 ### **简述G1垃圾收集器**
 
 ![image-20211113155241842](jvm.assets/image-20211113155241842.png)
 
-把堆划分成多个大小相等的独立区域（Region），新生代和老年代不再物理隔离。通过引入 Region 的概念，从而将原来的一整块内存空间划分成多个的小空间，使得每个小空间可以单独进行垃圾回收。G1整体来看是标记整理，从两个religion来看是标记复制
+G1 采用面向局部收集的设计思路和基于Region的内存布局形式。
+
+把堆划分成多个大小相等的独立区域（Region），新生代和老年代不再物理隔离。通过引入 Region 的概念，从而将原来的一整块内存空间 划分成多个的小空间，使得每个小空间可以单独进行垃圾回收。G1整体来看是标记整理，从两个religion来看是标记复制
 
 - 初始标记：标记与GC roots直接关联的对象。
 
@@ -225,7 +229,7 @@ Parallel Scavenge 的老年代版本，基于标记整理算法实现
 
 ## **常见内存分配策略**
 
-- 对象优先在新生代 Eden 区分配，当 Eden 没有足够空间时将发起一次 Minor GC。
+-  对象优先在新生代 Eden 区分配，当 Eden 没有足够空间时将发起一次 Minor GC。
 
 - 大对象直接进入老年代区分配。
 
@@ -238,33 +242,42 @@ Parallel Scavenge 的老年代版本，基于标记整理算法实现
 
 ## **简述JVM类加载过程**
 
-加载：
+- 加载：
 
-1. 通过全类名获取类的二进制字节流.
-2. 将类的静态存储结构转化为方法区的运行时数据结构。
-3. 在内存中生成类的Class对象，作为方法区数据的入口。
+- 1. 通过全类名获取类的二进制字节流.
+  2. 将类的静态存储结构转化为方法区的运行时数据结构。
+  3. 在内存中生成类的Class对象，作为方法区数据的入口。
 
-验证：对文件格式，元数据，字节码，符号引用等验证正确性。
+- 验证：对文件格式，元数据，字节码，符号引用等验证正确性。
 
-准备：在方法区内为类变量分配内存并设置为0值。
+- 准备：在方法区内为类变量分配内存并设置为0值。
 
-解析：将符号引用转化为直接引用。
+- 解析：将符号引用转化为直接引用。
 
-初始化：执行类构造器clinit方法，真正初始化。
+- 初始化：执行类构造器clinit方法，真正初始化。
+
+## 类和类加载器
+
+类 + 类加载器 决定了 两个类是否相同
+
+比较两个类是否“相 等”，只有在这两个类是由同一个类加载器加载的前提下才有意义，否则，即使这两个类来源于同一个 Class文件，被同一个Java虚拟机加载，只要加载它们的类加载器不同，那这两个类就必定不相等。
 
 ## **简述JVM中的类加载器**
 
-BootstrapClassLoader启动类加载器：加载/lib下的jar包和类。C++编写。
+- BootstrapClassLoader启动类加载器：加载/lib下的jar包和类。C++编写。
 
-ExtensionClassLoader扩展类加载器： /lib/ext目录下的jar包和类。java编写。
+- ExtensionClassLoader扩展类加载器： /lib/ext目录下的jar包和类。java编写。
 
-AppClassLoader应用类加载器，加载当前classPath下的jar包和类。java编写。
+- AppClassLoader应用类加载器，加载当前classPath下的jar包和类。java编写。
+
 
 ## **简述双亲委派机制**
 
 一个类加载器收到类加载请求之后，首先判断当前类是否被加载过。已经被加载的类会直接返回，如果没有被加载，首先将类加载请求转发给父类加载器，一直转发到启动类加载器，只有当父类加载器无法完成时才尝试自己加载。
 
-加载类顺序：BootstrapClassLoader->ExtensionClassLoader->AppClassLoader->CustomClassLoader 检查类是否加载顺序： CustomClassLoader->AppClassLoader->ExtensionClassLoader->BootstrapClassLoader
+- 加载类顺序：BootstrapClassLoader->ExtensionClassLoader->AppClassLoader->CustomClassLoader 
+- 检查类是否加载顺序： CustomClassLoader->AppClassLoader->ExtensionClassLoader->BootstrapClassLoader
+- <img src="jvm.assets/image-20211117230647615.png" alt="image-20211117230647615" style="zoom:67%;" />
 
 ## **双亲委派机制的优点**
 
