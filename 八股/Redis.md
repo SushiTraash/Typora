@@ -96,6 +96,36 @@ https://draveness.me/whys-the-design-redis-single-thread/
 3.  根据槽编号，寻找到其对应的[redis]()节点，在节点上执行hash命令。 
 4.  如果此时执行get操作，节点先验证该key对应的槽编号是不是归本节点管，如果是则保存数据。如果不是，则发送正确节点编号给客户端。 
 
+## Cluster 内部通信协议 Gossip
+
+
+
+## 集群脑裂问题
+
+- https://cloud.tencent.com/developer/article/1344086
+- https://www.jianshu.com/p/16db5e666e65
+
+**解决方案**
+redis的配置文件中，存在两个参数
+
+```
+min-slaves-to-write 3
+min-slaves-max-lag 10
+```
+
+**第一个参数表示连接到master的最少slave数量**
+**第二个参数表示slave连接到master的最大延迟时间**
+按照上面的配置，要求至少3个slave节点，且数据复制和同步的延迟不能超过10秒，否则的话master就会拒绝写请求，配置了这两个参数之后，如果发生集群脑裂，原先的master节点接收到客户端的写入请求会拒绝，就可以减少数据同步之后的数据丢失。
+
+注意：较新版本的redis.conf文件中的参数变成了
+
+```
+min-replicas-to-write 3
+min-replicas-max-lag 10
+```
+
+redis中的异步复制情况下的数据丢失问题也能使用这两个参数
+
 ## Redis RDB与AOF
 
 https://database.51cto.com/art/202110/686098.htm
@@ -139,3 +169,35 @@ AOF 是 Redis 的一种持久化机制，它会在每次收到来自客户端的
 ##  RDB与AOF优缺点比较 
 
 ![img](https://s3.51cto.com/oss/202110/18/f393e4c80049a53c4dee30ec6b77d9c3.png?x-oss-process=image/format,jpg,image/resize,w_600)
+
+## 分布式锁         
+
+使用redis 中的键值对实现。
+
+~~~shell
+SET LOCK 1111 NX ## NX 代表数据库中没有 LOCK 这个key 才设置，这个操作是原子的
+##上面的代码可能导致死锁
+##应该设置过期时间
+SET LOCK 1111 EX 30 NX  ##EX ：设置 30s 的过期时间
+~~~
+
+![image-20210911205036436](Redis.assets/image-20210911205036436.png)
+
+![image-20210911210930649](Redis.assets/image-20210911210930649.png)
+
+![image-20210911211248443](Redis.assets/image-20210911211248443.png)
+
+![image-20210911210826498](Redis.assets/image-20210911210826498.png)
+
+- 加锁阶段注意问题		
+  - 获取锁，执行完查询之后要释放锁(删除锁)
+  - 上锁时，key-value 的value 要用于区分锁拥有者
+  - 获得锁之后要设置锁过期时间、防止因为服务器出错导致无法释放锁从而导致死锁
+- 解锁（删除锁）注意问题
+  - 检查当前拥有锁的人是不是自己
+  - 解锁时，获取当前锁的值（这个值用于指明拥有锁的人）以及向redis服务器传输删除lock指令都涉及网络通信，会有延迟，破坏了原子性
+  - 使用eval 命令 执行lua脚本 脚本解锁，保证删除锁和对比锁拥有人是原子的。类似CAS。
+    - 脚本原子性如何实现：Redis只使用一个lua翻译器，因此每段脚本都是原子运行的。
+- 锁的续期问题
+  - 执行业务的时间过长，还没执行完业务，锁已经过期了。
+  - 超时时间设置长一点。 

@@ -301,4 +301,4 @@ G1 采用面向局部收集的设计思路和基于Region的内存布局形式�
 - -XX:MaxNewSize 年轻代最大值
 - -XX:PermSize 永生代初始值
 - -XX:MaxPermSize 永生代最大值
-- -XX:NewRatio 新生代与老年代的比例
+- -XX:NewRatio 新生代与老年代的比例   
