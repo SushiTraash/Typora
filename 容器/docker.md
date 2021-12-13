@@ -26,25 +26,45 @@ https://yeasy.gitbook.io/docker_practice/image/build
 
 # Docker进阶
 
-## 镜像操作commit
+## 保存当前容器为镜像：commit
 
 docker commit 可以将当前容器对存储层的操作保存下来，基于原有镜像保存为新的镜像（分层构建）
 
 Dockerfile 是一个文本文件，其内包含了一条条的 **指令(Instruction)**，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。
 
+
+
 ## Dockerfile
 
  Dockerfile是用于分层构建，定制镜像的脚本。
 
-## Dockerfile指令
+### Dockerfile指令
 
-### FROM 指定基础镜像
+#### FROM 指定基础镜像
 
 ~~~dockerfile
 FROM scratch ##空白镜像
 ~~~
 
-### RUN 执行命令
+#### RUN 执行命令
+
+~~~dockerfile
+RUN echo 'python3' >> ~/start_up.sh &&\  
+## \ ：换行符
+## && ：连接两条指令，前一条成功才可以进行下一条
+ chmod +x ~/agent_start.sh    
+
+~~~
+
+### 制作镜像
+
+#### build 根据Dockerfile 构建镜像
+
+~~~shell
+docker build -t testpython:v2 .
+##在Dockerfile 的同级目录运行。  ”.“ 代表当前目录
+##-t  tag 镜像的标签
+~~~
 
 
 
