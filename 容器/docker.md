@@ -66,6 +66,15 @@ docker build -t testpython:v2 .
 ##-t  tag 镜像的标签
 ~~~
 
+## push本地镜像
+
+~~~shell
+##指定远程仓库
+docker login --username=名字 -p= 密码 远程仓库ip:端口
+##根据tag指定本地镜像 推送
+docker push NAME:TAG
+~~~
+
 
 
 
