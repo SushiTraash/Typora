@@ -66,6 +66,13 @@ docker build -t testpython:v2 .
 ##-t  tag 镜像的标签
 ~~~
 
+## 镜像仓库和tag的关系
+
+![image-20211216180859003](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20211216180859003.png)
+
+- REPOSITORY仓库就是远程地址，用于存放镜像
+- TAG就是有点类似ID用于寻找jx
+
 ## push本地镜像
 
 ~~~shell
@@ -75,7 +82,18 @@ docker login --username=名字 -p= 密码 远程仓库ip:端口
 docker push NAME:TAG
 ~~~
 
+## 修改本地镜像tag
+
+~~~shell
+docker tag IMAGEID(镜像id) REPOSITORY:TAG（仓库：标签）
+
+~~~
 
 
 
+# Docker 坑
+
+## 中文乱码问题
+
+dockerfile 设置ENV LANG C.UTF-8 即可
 
