@@ -56,6 +56,34 @@ RUN echo 'python3' >> ~/start_up.sh &&\
 
 ~~~
 
+示例
+
+~~~dockerfile
+FROM ubuntu:18.04
+
+WORKDIR  /data/app/python
+ENV PYTHON_VERSION 3.6.9
+ENV AGENT_VERSION 1.0.15
+ENV LANG C.UTF-8
+RUN  apt-get update && \
+     apt-get install -y wget && \
+     apt update && \
+     ##apt install -y git &&\
+     apt install -y curl &&\
+     apt install -y zip &&\
+	wget https://pan.huya.com/s/yQBfW3YkjSAtiSZ/download -O ./agent.py &&\
+	apt install -y python3-pip &&\
+     pip3 install requests &&\ 
+     pip3 install pluginbase &&\
+     echo 'python3 /data/app/python/agent.py ${1} ${2} ${3} ${4} ${5}' >> ~/agent_start.sh && \
+     chmod +x ~/agent_start.sh    
+
+##python: zipfile 和 urllib 和time 和hashlib 和logging 自带
+
+~~~
+
+
+
 ### 制作镜像
 
 #### build 根据Dockerfile 构建镜像
@@ -71,7 +99,7 @@ docker build -t testpython:v2 .
 ![image-20211216180859003](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20211216180859003.png)
 
 - REPOSITORY仓库就是远程地址，用于存放镜像
-- TAG就是有点类似ID用于寻找jx
+- TAG就是有点类似ID用于寻找镜像
 
 ## push本地镜像
 
