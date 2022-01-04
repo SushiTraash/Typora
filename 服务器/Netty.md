@@ -193,10 +193,86 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 
 ## 引用计数
 
-与jvm 垃圾标记算法一致，用于释放对象资源，引用计数为0证明资源可以释放
+与jvm 垃圾标记算法一致，用于释放对象资源，引用计数为0证明资源可以释放。Netty为ByteBuf和ByteBufHolder引入引用计数
+
+![image-20220104151629192](Netty.assets/image-20220104151629192.png)
 
 # ChannelHandler 和ChannelPipeline
 
 
 
 # EventLoop
+
+## EventLoop基本概念
+
+### 什么是EventLoop?
+
+运行任务来处理在连接的生命周期内发生的事件是任何网络框架的基本功能。与之相应的编 程上的构造通常被称为事件循环。概况为 服务器用于处理事件的循环--事件循环
+
+### Java线程模型--Exectors 创建线程池
+
+![image-20220104175050654](Netty.assets/image-20220104175050654.png)
+
+## EventLoop接口
+
+### EventLoop接口 类层次结构
+
+![image-20220104175356866](Netty.assets/image-20220104175356866.png)
+
+### EventLoop IO操作和事件处理
+
+- Netty4线程模型：在Netty 4 中，所有的I/O操作和事件都由已经被分配给了 EventLoop的那个Thread来处理。
+- Netty3线程模型：在以前的版本中所使用的线程模型只保证了入站（之前称为上游）事件会在所谓的 I/O 线程 （对应于 Netty 4 中的 EventLoop）中执行。所有的出站（下游）事件都由调用线程处理，其可 能是 I/O 线程也可能是别的线程。
+- Netty4线程模型消除了EventLoop事件处理的线程同步问题。
+
+## 任务调度
+
+### Java 任务调度 - - 定时线程池
+
+![image-20220104180008719](Netty.assets/image-20220104180008719.png)
+
+![image-20220104180025342](Netty.assets/image-20220104180025342.png)
+
+### EventLoop调度任务
+
+![image-20220104180109924](Netty.assets/image-20220104180109924.png)
+
+## 线程模型和任务调度实现细节
+
+### 线程管理
+
+- EventLoop与一个Thread绑定，一对一。
+- Channel被注册到一个EventLoop, EventLoop可以注册多个Channel
+- 一旦一个 Channel 被分配给一个 EventLoop，它将在它的整个生命周期中都使用这个 EventLoop（以及相关联的 Thread）。
+- EventLoop负责对应channel生命周期里面的所有事件
+- EventLoop有自己独立的任务队列。（类似阻塞队列）
+- 执行逻辑图
+
+![image-20220104180615194](Netty.assets/image-20220104180615194.png)
+
+### 任务不要阻塞当前IO线程
+
+“永远不要将一个长时间运行的任务放入到执行队列中，因为它将阻塞需要在同一线程上执行的任何 其他任务。”如果必须要进行阻塞调用或者执行长时间运行的任务，我们建议使用一个专门的 EventExecutor
+
+### EventLoop 创建和分配
+
+1. ### 异步传输实现
+
+   ![image-20220104181127604](Netty.assets/image-20220104181127604.png)
+
+   在创建 EventLoopGroup 时就直接分配了 EventLoop。使用轮询进行分配。
+
+   一旦一个 Channel 被分配给一个 EventLoop，它将在它的整个生命周期中都使用这个 EventLoop（以及相关联的 Thread）。
+
+   同一个EventLoop的Channel共用一个ThreadLocal。因为他们用同一个Thread。
+
+2. ### 阻塞传输实现
+
+   ![image-20220104181446755](Netty.assets/image-20220104181446755.png)
+
+   每个Channel都分配一个新的EventLoop
+
+# 源码
+
+## ByteBuf
+
