@@ -196,3 +196,7 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 与jvm 垃圾标记算法一致，用于释放对象资源，引用计数为0证明资源可以释放
 
 # ChannelHandler 和ChannelPipeline
+
+
+
+# EventLoop
