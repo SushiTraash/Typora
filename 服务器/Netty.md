@@ -6,7 +6,7 @@
 
 Netty 是基于Java NIO开发的,NIO的模型如下
 
-![image-20211126151512189](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20211126151512189.png)
+![image-20211214015310169](Netty.assets/image-20211214015310169.png)
 
 - selector是JavaNIO的关键。使用事件通知API确定就绪Socket进行IO操作。
 
@@ -27,7 +27,7 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 
 - Channel ：代表连接，对应socket
 
-- 回调和Future：两者都可以在操作完成时通知相关方
+- 回调和Future：两者都可以在操作完成时**通知**相关方
 
   - 回调即回调函数。channelHandler 类似为了响应特定事件而执行的回调
 
@@ -35,7 +35,7 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 
   - 可以把 ChannelFutureListener 看作是回调的一个更加精细的版本。 事实上，回调和 Future 是相互补充的机制；它们相互结合，构成了 Netty 本身的关键构件块之一
 
-    <img src="Untitled.assets/image-20211212211008957.png" alt="image-20211212211008957" style="zoom: 80%;" />
+    <img src="Netty.assets/image-20211212211008957.png" alt="image-20211212211008957" style="zoom: 80%;" />
 
     上图的回调只处理新连接建立这一事件，而channelFutureListener可以注册到自定义的Future，因此更灵活精细
 
@@ -54,7 +54,7 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 
 ## 组件关系
 
-![image-20211212214044407](Untitled.assets/image-20211212214044407.png)
+![image-20211212214044407](Netty.assets/image-20211212214044407.png)
 
 - 一个 EventLoopGroup 包含一个或者多个 EventLoop；
 -  一个 EventLoop 在它的生命周期内只和一个 Thread 绑定； 
@@ -68,7 +68,9 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 
 ChannelFuture接口可以用过addListener注册channelFutureListener。
 
-## Echo服务器搭建----Hello World
+## Hello World
+
+### Echo服务器搭建
 
 主要有
 
