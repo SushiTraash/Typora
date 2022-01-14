@@ -1,4 +1,4 @@
-# Netty基础
+#### Netty基础
 
 ## 基础
 
@@ -22,6 +22,54 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 > NIO 最开始是新的输入/输出（New Input/Output）的英文缩写，但是，该Java API 已经出现足够长的时间 了，不再是“新的”了，因此，如今大多数的用户认为NIO 代表非阻塞 I/O（Non-blocking I/O），而阻塞I/O（blocking  I/O）是旧的输入/输出（old input/output，OIO）。你也可能遇到它被称为普通I/O（plain I/O）的时候。
 
 也就是说原意是New IO,后来普遍被理解错了。
+
+## IO模型实现
+
+### 多路复用IO -- Reactor模式
+
+![preview](Netty.assets/view.jpeg)
+
+#### Reactor包含如下角色：
+
+- Handle 句柄；用来标识socket连接或是打开文件；
+- Synchronous Event Demultiplexer：同步事件多路分解器：由操作系统内核实现的一个函数；用于阻塞等待发生在句柄集合上的一个或多个事件；（如select/epoll；）
+- Event Handler：事件处理接口
+- Concrete Event HandlerA：实现应用程序所提供的特定事件处理逻辑；
+- Reactor：反应器，定义一个接口，实现以下功能：
+  1）供应用程序注册和删除关注的事件句柄；
+  2）运行事件循环；
+  3）有就绪事件到来时，分发事件到之前注册的回调函数上处理；
+
+#### 时序图
+
+![241052444538838.jpg](Netty.assets/bVlyFP.jpeg)
+
+1. 应用启动，将关注的事件handle注册到Reactor中；
+2. 调用Reactor，进入无限事件循环，等待注册的事件到来；
+3. 事件到来，select返回，Reactor将事件分发到之前注册的回调函数中处理；
+
+### 异步IO -- Proactor模式
+
+![241052458282851.jpg](Netty.assets/bVlyFQ.jpeg)
+
+#### Proactor主动器模式包含如下角色
+
+- Handle 句柄；用来标识socket连接或是打开文件；
+- Asynchronous Operation Processor：异步操作处理器；负责执行异步操作，一般由操作系统内核实现；
+- Asynchronous Operation：异步操作
+- Completion Event Queue：完成事件队列；异步操作完成的结果放到队列中等待后续使用
+- Proactor：主动器；为应用程序进程提供事件循环；从完成事件队列中取出异步操作的结果，分发调用相应的后续处理逻辑；
+- Completion Handler：完成事件接口；一般是由回调函数组成的接口；
+- Concrete Completion Handler：完成事件处理逻辑；实现接口定义特定的应用处理逻辑；
+
+#### 时序图
+
+#### ![241052468598435.jpg](Netty.assets/bVlyFR.jpeg)
+
+1. 应用程序启动，调用异步操作处理器提供的异步操作接口函数，调用之后应用程序和异步操作处理就独立运行；应用程序可以调用新的异步操作，而其它操作可以并发进行；
+2. 应用程序启动Proactor主动器，进行无限的事件循环，等待完成事件到来；
+3. 异步操作处理器执行异步操作，完成后将结果放入到完成事件队列；
+4. 主动器从完成事件队列中取出结果，分发到相应的完成事件回调函数处理逻辑中；
 
 ## 核心组件
 

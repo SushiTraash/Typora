@@ -154,3 +154,85 @@ public class MyListener implements ApplicationListener<ApplicationEvent> {
 ~~~
 
 ### ApplicationListener原理
+
+# Spring Boot 持久层
+
+https://www.wdbyte.com/2020/12/springboot/springboot-multiple-datasource/
+
+https://mp.weixin.qq.com/s/-8ytSdjKGmukdNKx_f0jLw
+
+## Mybatis --> Mybatis Generator 
+
+在企业开发中一般都用Mybatis，而Mapper.xml和对应dao 接口都是用Mybatis Generator生成。
+
+- 数据源配置在SpringBoot 的 application.propertie中
+- 使用 Maven 的 Mybatis-Generator插件生成Mapper.xml和dao接口
+
+## Spring Boot 多数据源配置
+
+https://segmentfault.com/a/1190000038731849
+
+## Application.properties --  配置 数据源连接信息
+
+~~~yaml
+##
+##多数据源配置的时候，与单数据源不同点在于spring.datasource之后多设置一个数据源名称
+##primary和secondary来区分不同的数据源配置，这个前缀将在后续初始化数据源的时候用到。
+########################## 主数据源 ##################################
+spring.datasource.primary.jdbc-url=jdbc:mysql://127.0.0.1:3306/demo1?characterEncoding=utf-8&serverTimezone=GMT%2B8
+spring.datasource.primary.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.primary.username=root
+spring.datasource.primary.password=
+
+########################## 第二个数据源 ###############################
+spring.datasource.datasource2.jdbc-url=jdbc:mysql://127.0.0.1:3306/demo2?characterEncoding=utf-8&serverTimezone=GMT%2B8
+spring.datasource.datasource2.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.datasource2.username=root
+spring.datasource.datasource2.password=
+
+# mybatis
+mybatis.mapper-locations=classpath:mapper/*.xml
+mybatis.type-aliases-package=com.wdbyte.domain
+~~~
+
+### 配置类 -- 给对应mapper选择数据源
+
+~~~java
+@Configuration
+@MapperScan(basePackages = {"com.wdbyte.mapper.primary"}, sqlSessionFactoryRef = "sqlSessionFactory")
+public class PrimaryDataSourceConfig {
+
+    @Bean(name = "dataSource")
+    //选择数据源
+    @ConfigurationProperties(prefix = "spring.datasource.primary")
+    @Primary
+    public DataSource dataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean(name = "sqlSessionFactory")
+    @Primary
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+        bean.setDataSource(dataSource);
+        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/*.xml"));
+        return bean.getObject();
+    }
+
+    @Bean(name = "transactionManager")
+    @Primary
+    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean(name = "sqlSessionTemplate")
+    @Primary
+    public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+}
+~~~
+
+- `@ConfigurationProperties(prefix = "spring.datasource.primary")`：使用spring.datasource.primary 开头的配置。
+- `@Primary` ：声明这是一个主数据源（默认数据源），多数据源配置时**必不可少**。
+- `@Qualifier`：显式选择传入的 Bean。
