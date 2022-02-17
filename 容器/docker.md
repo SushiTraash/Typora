@@ -32,8 +32,6 @@ docker commit 可以将当前容器对存储层的操作保存下来，基于原
 
 Dockerfile 是一个文本文件，其内包含了一条条的 **指令(Instruction)**，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。
 
-
-
 ## Dockerfile
 
  Dockerfile是用于分层构建，定制镜像的脚本。
@@ -42,23 +40,23 @@ Dockerfile 是一个文本文件，其内包含了一条条的 **指令(Instruct
 
 #### FROM 指定基础镜像
 
-~~~dockerfile
+```dockerfile
 FROM scratch ##空白镜像
-~~~
+```
 
 #### RUN 执行命令
 
-~~~dockerfile
+```dockerfile
 RUN echo 'python3' >> ~/start_up.sh &&\  
 ## \ ：换行符
 ## && ：连接两条指令，前一条成功才可以进行下一条
- chmod +x ~/agent_start.sh    
+ chmod +x ~/agent_start.sh  
 
-~~~
+```
 
 示例
 
-~~~dockerfile
+```dockerfile
 FROM ubuntu:18.04
 
 WORKDIR  /data/app/python
@@ -76,23 +74,21 @@ RUN  apt-get update && \
      pip3 install requests &&\ 
      pip3 install pluginbase &&\
      echo 'python3 /data/app/python/agent.py ${1} ${2} ${3} ${4} ${5}' >> ~/agent_start.sh && \
-     chmod +x ~/agent_start.sh    
+     chmod +x ~/agent_start.sh  
 
 ##python: zipfile 和 urllib 和time 和hashlib 和logging 自带
 
-~~~
-
-
+```
 
 ### 制作镜像
 
 #### build 根据Dockerfile 构建镜像
 
-~~~shell
+```shell
 docker build -t testpython:v2 .
 ##在Dockerfile 的同级目录运行。  ”.“ 代表当前目录
 ##-t  tag 镜像的标签
-~~~
+```
 
 ## 镜像仓库和tag的关系
 
@@ -103,20 +99,80 @@ docker build -t testpython:v2 .
 
 ## push本地镜像
 
-~~~shell
+```shell
 ##指定远程仓库
 docker login --username=名字 -p= 密码 远程仓库ip:端口
 ##根据tag指定本地镜像 推送
 docker push NAME:TAG
-~~~
+```
 
 ## 修改本地镜像tag
 
-~~~shell
+```shell
 docker tag IMAGEID(镜像id) REPOSITORY:TAG（仓库：标签）
 
-~~~
+```
 
+# Docker
+
+## Docker安装
+
+- 官网找到一下目录，按教程安装
+
+![image-20210612124654630](C:\Users\sushi\AppData\Roaming\Typora\typora-user-images\image-20210612124654630.png)
+
+## Docker配置
+
+- 配置mysql端口映射和文件挂载
+
+```shell
+docker run -p 3306:3306 --name mysql  -v /mydata/mysql/log:/var/log/mysql  -v /mydata/mysql/data:/var/lib/mysql  -v /mydata/mysql/conf:/etc/mysql  -e MYSQL_ROOT_PASSWORD=root  -d mysql:5.7
+```
+
+- 配置redis时，如果Linux本身就有redis要记得停止redis服务
+
+  ```shell
+  #下载redis
+  docker pull redis
+  #配置文件
+  mkdir -p /mydata/redis/conf
+  touch /mydata/redis/conf/redis.conf
+  #启动
+  docker run -p 6379:6379 --name redis \
+  -v /mydata/redis/data:/data \
+  -v /mydata/redis/conf/redis.conf:/etc/redis/redis.conf \
+  -d redis redis-server /etc/redis/redis.conf
+  #查看容器
+  docker ps
+  #查看所有容器（包括停止了的）
+  docker ps -a
+  #使用redis-cli模式 进入redis
+  docker exec -it redis redis-cli#最后输入的redis-cli表明进入是使用的命令，redis-cli命令是用于进入cli模式的
+
+  ```
+
+## Docker 使用 Mysql 、redis
+
+![image-20210712202747576](谷粒商城.assets/image-20210712202747576.png)
+
+```
+# docker 中下载 mysql
+docker pull mysql
+
+#启动
+docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=Lzslov123! -d mysql
+
+#进入容器
+docker exec -it mysql bash
+
+#登录mysql
+mysql -u root -p
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Lzslov123!';
+
+#添加远程登录用户
+CREATE USER 'liaozesong'@'%' IDENTIFIED WITH mysql_native_password BY 'Lzslov123!';
+GRANT ALL PRIVILEGES ON *.* TO 'liaozesong'@'%';
+```
 
 
 # Docker 坑
@@ -124,4 +180,3 @@ docker tag IMAGEID(镜像id) REPOSITORY:TAG（仓库：标签）
 ## 中文乱码问题
 
 dockerfile 设置ENV LANG C.UTF-8 即可
-
