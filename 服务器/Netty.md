@@ -9,12 +9,11 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 ![image-20211126151512189](Netty.assets\image-20211126151512189.png)
 
 - selector是JavaNIO的关键。使用事件通知API确定就绪Socket进行IO操作。
-
 - Selector 可以检查任意读写操作的完成状态，使得单线程可以处理多个连接（类似IO多路复用）
 
   优点
 
-  - 当没有 I/O 操作需要处理的时候，线程也可以被用于其他任务	
+  - 当没有 I/O 操作需要处理的时候，线程也可以被用于其他任务
   - 使用较少的线程便可以处理许多连接，因此也减少了内存管理和上下文切换所带来开销；
 
 ### New IO 还是 Non-block IO?
@@ -64,8 +63,6 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 
 #### 时序图
 
-#### ![241052468598435.jpg](Netty.assets/bVlyFR.jpeg)
-
 1. 应用程序启动，调用异步操作处理器提供的异步操作接口函数，调用之后应用程序和异步操作处理就独立运行；应用程序可以调用新的异步操作，而其它操作可以并发进行；
 2. 应用程序启动Proactor主动器，进行无限的事件循环，等待完成事件到来；
 3. 异步操作处理器执行异步操作，完成后将结果放入到完成事件队列；
@@ -74,13 +71,10 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 ## 核心组件
 
 - Channel ：代表连接，对应socket
-
 - 回调和Future：两者都可以在操作完成时通知相关方
 
   - 回调即回调函数。channelHandler 类似为了响应特定事件而执行的回调
-
   - ChannelFuture是netty自己实现的异步，可以注册多个ChannelFutureListener
-
   - 可以把 ChannelFutureListener 看作是回调的一个更加精细的版本。 事实上，回调和 Future 是相互补充的机制；它们相互结合，构成了 Netty 本身的关键构件块之一
 
     <img src="Netty.assets/image-20211212211008957.png" alt="image-20211212211008957" style="zoom: 80%;" />
@@ -88,9 +82,6 @@ Netty 是基于Java NIO开发的,NIO的模型如下
     上图的回调只处理新连接建立这一事件，而channelFutureListener可以注册到自定义的Future，因此更灵活精细
 
 ## 总结
-
-1. 
-2. 
 
 # Netty 组件
 
@@ -105,9 +96,9 @@ Netty 是基于Java NIO开发的,NIO的模型如下
 ![image-20211212214044407](Netty.assets/image-20211212214044407.png)
 
 - 一个 EventLoopGroup 包含一个或者多个 EventLoop；
--  一个 EventLoop 在它的生命周期内只和一个 Thread 绑定； 
--  所有由 EventLoop 处理的 I/O 事件都将在它专有的 Thread 上被处理； 
-- 一个 Channel 在它的生命周期内只注册于一个 EventLoop； 
+- 一个 EventLoop 在它的生命周期内只和一个 Thread 绑定；
+- 所有由 EventLoop 处理的 I/O 事件都将在它专有的 Thread 上被处理；
+- 一个 Channel 在它的生命周期内只注册于一个 EventLoop；
 - 一个 EventLoop 可能会被分配给一个或多个 Channel。
 
 注意，在这种设计中，一个给定 Channel 的 I/O 操作都是由相同的 Thread 执行的，实际 上消除了对于同步的需要。
@@ -123,7 +114,7 @@ ChannelFuture接口可以用过addListener注册channelFutureListener。
 - ChannelHandler 分为：服务端和客户端
 - EchoServer
 
-~~~java
+```java
 @Sharable
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
     //每条传入消息都要调用read
@@ -151,7 +142,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     }
 }
-~~~
+```
 
 # ByteBuf
 
@@ -170,13 +161,11 @@ readIndex和writeIndex相同时，到达数据的末尾。如果还有读取数�
    数据存储在JVM的堆空间中，也叫做支撑数组。优点：方便管理
 
    ![image-20211223142650104](Netty.assets/image-20211223142650104.png)
-
 2. 直接缓冲区
 
    通过本地调用分配内存。避免了每次调用本地 I/O 操作之前（或者之后）将缓冲区的内容复 制到一个中间缓冲区（或者从中间缓冲区把内容复制到缓冲区）。
 
    缺点：它们的分配和释放都较为昂贵。如果你 正在处理遗留代码，你也可能会遇到另外一个缺点：因为数据不是在堆上，所以你不得不进行一 次复制，
-
 3. 复合缓冲区
 
    为多个ButeBuf提供一个聚合视图。
@@ -204,9 +193,9 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 
 #### 索引管理
 
-可以通过调用 markReaderIndex()、markWriterIndex()、resetWriterIndex() 和 resetReaderIndex()来标记和重置 ByteBuf 的 readerIndex 和 writerIndex。这些和 InputStream 上的调用类似，只是没有 readlimit 参数来指定标记什么时候失效。 
+可以通过调用 markReaderIndex()、markWriterIndex()、resetWriterIndex() 和 resetReaderIndex()来标记和重置 ByteBuf 的 readerIndex 和 writerIndex。这些和 InputStream 上的调用类似，只是没有 readlimit 参数来指定标记什么时候失效。
 
-也可以通过调用 readerIndex(int)或者 writerIndex(int)来将索引移动到指定位置。试 图将任何一个索引设置到一个无效的位置都将导致一个 IndexOutOfBoundsException。 
+也可以通过调用 readerIndex(int)或者 writerIndex(int)来将索引移动到指定位置。试 图将任何一个索引设置到一个无效的位置都将导致一个 IndexOutOfBoundsException。
 
 可以通过调用 clear()方法来将 readerIndex 和 writerIndex 都设置为 0。注意，这 并不会清除内存中的内容。下图展示了它是如何工作的	。
 
@@ -217,8 +206,6 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 ### 其他操作
 
 ## ByteBufHolder
-
-
 
 ## ByteBuf分配
 
@@ -232,7 +219,7 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 
 ![image-20211223160844561](Netty.assets/image-20211223160844561-16402469279541.png)
 
-#### 两种实现：PooledByteBufAllocator 和UnpooledByteBufAloocator
+#### 两种实现：PooledByteBufAllocator 和UnpooledByteBufAllocator
 
 1. PooledByteBufAllocator
    - 池化了ByteBuf的实例以提高性能并最大限度地减少内存碎片。此实 现使用jemalloc分配内存
@@ -247,7 +234,9 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 
 # ChannelHandler 和ChannelPipeline
 
+## channel、channelPipeline 、Context和channelHandler关系
 
+![1645464323291.png](image/Netty/1645464323291.png)
 
 # EventLoop
 
@@ -313,7 +302,6 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
    一旦一个 Channel 被分配给一个 EventLoop，它将在它的整个生命周期中都使用这个 EventLoop（以及相关联的 Thread）。
 
    同一个EventLoop的Channel共用一个ThreadLocal。因为他们用同一个Thread。
-
 2. ### 阻塞传输实现
 
    ![image-20220104181446755](Netty.assets/image-20220104181446755.png)
@@ -323,4 +311,3 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 # 源码
 
 ## ByteBuf
-
