@@ -226,13 +226,54 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 2. UnpooledByteBufAllocator
    - 不池化，调用返回新实例
 
-## 引用计数
+## 引用计数 -- 实现池化技术
 
 与jvm 垃圾标记算法一致，用于释放对象资源，引用计数为0证明资源可以释放。Netty为ByteBuf和ByteBufHolder引入引用计数
 
 ![image-20220104151629192](Netty.assets/image-20220104151629192.png)
 
 # ChannelHandler 和ChannelPipeline
+
+## Channel 生命周期
+
+
+![](image/Netty/1646271816571.png)
+
+## ChannelHandler 生命周期
+
+生命周期方法 在ChannelHandler 被添加到ChannelPipeline 或从ChannelPL中删除时会调用这些操作。
+
+![img](image/Netty/1646271890537.png)
+
+两个重要的ChannelHandler子接口
+
+* ChannelInboundHandler--处理入站
+* ChannelOutboundHandler--处理出站
+
+## ChannelInboundHandler -- 生命周期方法
+
+InboundHandler 处理入站数据，主要关注channel生命周期
+
+![](image/Netty/1646272157866.png)
+
+## ChannelOutboundHandler
+
+用于处理出站数据。
+
+![](image/Netty/1646272176545.png)
+
+## ChannelAdapter--适配器模式
+
+方便自定义
+
+![](image/Netty/1646272388112.png)
+
+## 资源释放
+
+如果一个消息被消费或者丢弃了，并且没有传递给 ChannelPipeline 中的下一个ChannelOutboundHandler，那么用户就有责任调用 ReferenceCountUtil.release()。如果消息到达了实际的传输层，那么当它被写入时或者 Channel 关闭时，都将被自动释放。
+
+![](image/Netty/1646272705103.png)
+
 
 ## channel、channelPipeline 、Context和channelHandler关系
 
