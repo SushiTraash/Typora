@@ -29,6 +29,25 @@ CREATE(){
 }
 ~~~
 
+### 方法的参数
+
+~~~java
+public class{
+    int bid;
+    String bname;
+    String s1;
+    ///.....
+    //....
+}
+
+//定义方法时，入参要尽可能具体。这样方法的复用度才够高
+//
+public void Func(Bo boObject)
+public void Func(int bid, String bname)//下面这种方法复用度更高
+~~~
+
+
+
 
 
 # SpringBoot 异步
