@@ -10,45 +10,24 @@
   - 日志
   - 缓存
 
-~~~JAVA
+```JAVA
 假设现在有一个业务代码CREATE
 CREATE(){
     //业务逻辑调用包括 以下三步
     checkParam();//可以猜想到，这个校验方法会被三个以上的接口调用，甚至可以说每个接口调用前都要调用这个方法。
     			//因此要抽象成一个方法
-    
+  
     createMR();//上下文强相关时 而且可重用性不强就 不用 抽象成一个方法
     		//
     approveMR();//
-    
+  
     //边界逻辑
     //错误处理可以写在 业务代码里
     //也可以使用Aop注解 
-    
+  
     //尽量使用声明式（注解）而不是过程式（抽象为方法）
 }
-~~~
-
-### 方法的参数
-
-~~~java
-public class{
-    int bid;
-    String bname;
-    String s1;
-    ///.....
-    //....
-}
-
-//定义方法时，入参要尽可能具体。这样方法的复用度才够高
-//
-public void Func(Bo boObject)
-public void Func(int bid, String bname)//下面这种方法复用度更高
-~~~
-
-
-
-
+```
 
 # SpringBoot 异步
 
@@ -65,7 +44,7 @@ https://segmentfault.com/a/1190000039097608
 
 需要继承ApplicationEvent
 
-~~~java
+```java
 public class MyTestEvent extends ApplicationEvent{
     /**
      * 
@@ -87,13 +66,13 @@ public class MyTestEvent extends ApplicationEvent{
         this.msg = msg;
     }
 }
-~~~
+```
 
 ## 事件发布者
 
 使用ApplicationEventPublisher发布事件
 
-~~~java
+```java
 @Component
 public class MyTestEventPubLisher {
     @Autowired
@@ -107,7 +86,7 @@ public class MyTestEventPubLisher {
     }
 
 }
-~~~
+```
 
 ## 监听器 -- ApplicationListener 和 @EventListener
 
@@ -115,7 +94,7 @@ public class MyTestEventPubLisher {
 
 ### ApplicationListener
 
-~~~java
+```java
 public interface ApplicationListener<E extends ApplicationEvent> extends EventListener {
  
 /**
@@ -124,7 +103,7 @@ public interface ApplicationListener<E extends ApplicationEvent> extends EventLi
 */
 void onApplicationEvent(E event);
 }
-~~~
+```
 
 - 泛型的类型必须是 ApplicationEvent 及其子类
 - 只要实现了这个接口，那么当容器有相应的事件触发时，就能触发 onApplicationEvent 方法。
@@ -133,7 +112,7 @@ void onApplicationEvent(E event);
 
 ### 非注解使用 -- 继承ApplicationListener
 
-~~~java
+```java
 @Component
 public class MyListener implements ApplicationListener<ApplicationEvent> {
     @Override
@@ -141,11 +120,11 @@ public class MyListener implements ApplicationListener<ApplicationEvent> {
         System.out.println("non annotation : " + myEvt.getSource());
     }
 }
-~~~
+```
 
 ### 注解使用 -- @EventListener
 
-~~~java
+```java
 @Configuration
 public class config {
     @EventListener
@@ -154,15 +133,15 @@ public class config {
 
     }
 }
-~~~
+```
 
 ## 原理
 
 ### @EvenrListener原理
 
-上面的@Eventlistener注解的方法会被封装成`ApplicationListener`对象,类似
+上面的@Eventlistener注解的方法会被封装成 `ApplicationListener`对象,类似
 
-~~~java
+```java
 @Component
 public class MyListener implements ApplicationListener<ApplicationEvent> {
     @Override
@@ -170,7 +149,7 @@ public class MyListener implements ApplicationListener<ApplicationEvent> {
         System.out.println("annotation : " + evt.getMsg());//被@EventListener注解方法
     }
 }
-~~~
+```
 
 ### ApplicationListener原理
 
@@ -180,7 +159,7 @@ https://www.wdbyte.com/2020/12/springboot/springboot-multiple-datasource/
 
 https://mp.weixin.qq.com/s/-8ytSdjKGmukdNKx_f0jLw
 
-## Mybatis --> Mybatis Generator 
+## Mybatis --> Mybatis Generator
 
 在企业开发中一般都用Mybatis，而Mapper.xml和对应dao 接口都是用Mybatis Generator生成。
 
@@ -193,7 +172,7 @@ https://segmentfault.com/a/1190000038731849
 
 ## Application.properties --  配置 数据源连接信息
 
-~~~yaml
+```yaml
 ##
 ##多数据源配置的时候，与单数据源不同点在于spring.datasource之后多设置一个数据源名称
 ##primary和secondary来区分不同的数据源配置，这个前缀将在后续初始化数据源的时候用到。
@@ -212,11 +191,11 @@ spring.datasource.datasource2.password=
 # mybatis
 mybatis.mapper-locations=classpath:mapper/*.xml
 mybatis.type-aliases-package=com.wdbyte.domain
-~~~
+```
 
 ### 配置类 -- 给对应mapper选择数据源
 
-~~~java
+```java
 @Configuration
 @MapperScan(basePackages = {"com.wdbyte.mapper.primary"}, sqlSessionFactoryRef = "sqlSessionFactory")
 public class PrimaryDataSourceConfig {
@@ -250,8 +229,18 @@ public class PrimaryDataSourceConfig {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 }
-~~~
+```
 
 - `@ConfigurationProperties(prefix = "spring.datasource.primary")`：使用spring.datasource.primary 开头的配置。
 - `@Primary` ：声明这是一个主数据源（默认数据源），多数据源配置时**必不可少**。
 - `@Qualifier`：显式选择传入的 Bean。
+
+## Spring boot IoC容器初始化顺序
+
+“static 成员变量 ”--> “非static成员变量” --> “被 `@Autowired`修饰的构造函数” --> “被 `@Autowired`修饰的成员变量b” --> “被 `@PostConstruct`修饰的 `init()`函数”。
+
+https://www.jianshu.com/p/3a8f2dfd8445
+
+坑 ： https://blog.csdn.net/jzy2046/article/details/89948124
+
+https://blog.csdn.net/weixin_39593994/article/details/81627969

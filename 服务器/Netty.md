@@ -232,10 +232,11 @@ buffer.getByte(i),不会改变readIndex和WriteIndex的值
 
 ![image-20220104151629192](Netty.assets/image-20220104151629192.png)
 
+# ByteBuf 中的零拷贝
+
 # ChannelHandler 和ChannelPipeline
 
 ## Channel 生命周期
-
 
 ![](image/Netty/1646271816571.png)
 
@@ -273,7 +274,6 @@ InboundHandler 处理入站数据，主要关注channel生命周期
 如果一个消息被消费或者丢弃了，并且没有传递给 ChannelPipeline 中的下一个ChannelOutboundHandler，那么用户就有责任调用 ReferenceCountUtil.release()。如果消息到达了实际的传输层，那么当它被写入时或者 Channel 关闭时，都将被自动释放。
 
 ![](image/Netty/1646272705103.png)
-
 
 ## channel、channelPipeline 、Context和channelHandler关系
 
